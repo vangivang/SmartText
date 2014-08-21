@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">SmarText</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="menu_settings">Settings</string>
+    <string name="title_activity_person_messages">PersonMessagesActivity</string>
+    <string name="title_activity_settings">SettingsActivity</string>
+    <string name="title_activity_new_message">NewMessageActivity</string>
+    <string name="title_activity_my_contacts">MyContactsActivity</string>
+    <string name="title_activity_select_icon">Select icon</string>
+    <string name="icon_image">smily</string>
+    <string name="title_activity_icon_list_activity">Select Icon</string>
+
+</resources>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="grid_alternate_1">#f5f5f5</color>
+    <color name="grid_alternate_2">#ebebeb</color>
+    <color name="conversation_user_name">#4d4d4d</color>
+    <color name="conversation_text">#747474</color>
+    <color name="transperent">#80000000</color>
+    <color name="settings_divider">#dcdcdc</color>
+    <color name="selection">#dcdcdc</color>
+    <color name="black">#000000</color>
+    <color name="white">#ffffff</color>
+
+</resources>

@@ -1,0 +1,134 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/grid_alternate_1"
+    android:orientation="vertical"
+    tools:context=".PersonMessagesActivity" >
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <ImageView
+            android:id="@+id/action_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scaleType="fitXY"
+            android:src="@drawable/top_bar" >
+        </ImageView>
+
+        <ImageView
+            android:id="@+id/ivBack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:layout_marginLeft="7dp"
+            android:layout_marginTop="15dp"
+            android:clickable="true"
+            android:src="@drawable/btn_back" />
+
+        <ImageView
+            android:id="@+id/ivDeleteConversations"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:layout_marginRight="7dp"
+            android:layout_marginTop="13dp"
+            android:clickable="true"
+            android:src="@drawable/btn_delete_conversation" />
+
+        <TextView
+            android:id="@+id/txtPersonalMessages"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:fontFamily="Myriad Pro"
+            android:gravity="center"
+            android:text="Name"
+            android:textColor="#ffffff"
+            android:textSize="18dp"
+            android:textStyle="bold" />
+    </FrameLayout>
+
+    <MultiAutoCompleteTextView
+        android:id="@+id/txtPhoneNumber"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="66dp"
+        android:background="@drawable/edit_text_focus"
+        android:hint="To"
+        android:maxLines="2" />
+
+    <ListView
+        android:id="@+id/messagesList"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_marginBottom="63dp"
+        android:layout_marginTop="66dp"
+        android:choiceMode="singleChoice"
+        android:clickable="false"
+        android:divider="#00000000"
+        android:dividerHeight="13dp"
+        android:fadingEdge="none"
+        android:paddingBottom="2dp"
+        android:paddingTop="2dp" >
+
+    </ListView>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/footer" >
+
+        <EditText
+            android:id="@+id/etMessageBody"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_gravity="center"
+            android:layout_marginBottom="2dp"
+            android:layout_marginLeft="60dp"
+            android:layout_marginRight="60dp"
+            android:layout_marginTop="4dp"
+            android:background="@drawable/edit_text_focus"
+            android:ems="10"
+            android:hint="Tap to enter message"
+            android:inputType="textMultiLine"
+            android:maxHeight="100dp"
+            android:maxLines="2" >
+
+        </EditText>
+
+        <ImageView
+            android:id="@+id/btnIcons"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_gravity="left|center"
+            android:layout_marginLeft="6dp"
+            android:layout_marginTop="5dp"
+            android:clickable="true"
+            android:paddingBottom="10dp"
+            android:src="@drawable/btn_list"
+            android:text="Icons" />
+
+        <ImageView
+            android:id="@+id/btnSend"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_gravity="right|center"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="5dp"
+            android:clickable="true"
+            android:paddingBottom="10dp"
+            android:src="@drawable/btn_send_sms"
+            android:text="Send" />
+
+    </FrameLayout>
+
+</RelativeLayout>

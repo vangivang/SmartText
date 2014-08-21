@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <!-- "background shadow" -->
+    <item
+        android:left="6px"
+        android:top="6px">
+        <shape android:shape="rectangle" >
+            <solid android:color="#c2c2c2" />
+
+            <stroke
+                android:width="1dip"
+                android:color="#c2c2c2" >
+            </stroke>
+
+            <corners android:radius="6dp" />
+        </shape>
+    </item>
+
+    <!-- background color -->
+    <item
+        android:bottom="1px"
+        android:left="0px"
+        android:right="1px"
+        android:top="1px">
+        <shape android:shape="rectangle" >
+            <solid android:color="#feb87a" />
+
+            <corners android:radius="6dp" />
+
+            <padding
+                android:bottom="10dp"
+                android:left="10dp"
+                android:right="10dp"
+                android:top="10dp" />
+
+            <stroke
+                android:width="1dip"
+                android:color="#ff9232" >
+            </stroke>
+        </shape>
+    </item>
+
+    <!-- line -->
+    <item android:top="-8dp">
+        <shape>
+            <solid android:color="#ffdfc3" />
+
+            <size android:height="1dip" />
+        </shape>
+    </item>
+
+    <!-- cover below line -->
+    <item android:top="-7dp">
+        <shape>
+            <solid android:color="#feb87a" />
+
+            <size android:height="1dip" />
+        </shape>
+    </item>
+
+    <!-- cover arrow line -->
+    <!--
+    item
+        android:left="-12dp"
+        android:right="10dp">
+        <shape android:shape="rectangle">
+            <padding android:top="20dp" android:bottom="20dp"/>
+            <solid android:color="#333333" />
+            <size android:height="15dp" />
+        </shape>
+    </item
+    -->
+
+    <item android:left="-16dp">
+        <bitmap
+            android:gravity="center|left"
+            android:src="@drawable/arrow_orange_new_longer" />
+    </item>
+
+</layer-list>

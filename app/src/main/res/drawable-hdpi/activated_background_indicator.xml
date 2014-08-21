@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:drawable="@color/grid_alternate_1" android:state_first="true"/>
+    <item android:drawable="@color/transperent" android:state_pressed="true"/>
+    <item android:drawable="@color/transperent" android:state_selected="true"/>
+    <item android:drawable="@color/transperent" android:state_activated="true"/>
+
+</selector>
