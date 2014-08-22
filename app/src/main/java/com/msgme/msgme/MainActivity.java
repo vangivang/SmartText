@@ -1,28 +1,9 @@
 package com.msgme.msgme;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import com.msgme.msgme.adapters.ContactMessagesAdapter;
-import com.msgme.msgme.database.MyDataBase;
-import com.msgme.msgme.storage.SharedPreferencesManager;
-import com.msgme.msgme.vo.ContactMessages;
-import com.msgme.msgme.vo.Message;
-
-import android.content.res.XmlResourceParser;
-import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Bundle;
-import android.os.Handler;
-import android.provider.ContactsContract;
-import android.provider.ContactsContract.PhoneLookup;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -31,6 +12,12 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.database.Cursor;
+import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.os.Handler;
+import android.provider.ContactsContract;
+import android.provider.ContactsContract.PhoneLookup;
 import android.telephony.SmsManager;
 import android.util.Log;
 import android.view.Menu;
@@ -41,13 +28,27 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.msgme.msgme.adapters.ContactMessagesAdapter;
+import com.msgme.msgme.database.AppContentProvider;
+import com.msgme.msgme.storage.SharedPreferencesManager;
+import com.msgme.msgme.vo.ContactMessages;
+import com.msgme.msgme.vo.Message;
+
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 public class MainActivity extends Activity {
 
-    private static final String TAG = "com.msgme.msgme.MainActivity";
+    private static final String TAG = "LOGGY1";
 
     private static final String SERVER_URL = "http://www..com/";
     private static final String XML_FILE = "filename.xml";
@@ -79,7 +80,7 @@ public class MainActivity extends Activity {
     private String lastConversationMessage = null;
 
     private Context context = this;
-    private MyDataBase mDataBase;
+//    private MyDataBase mDataBase;
 
     private static int mutex = 0;
     Handler regularHandler = new Handler(new Handler.Callback() {
@@ -121,7 +122,7 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mDataBase = new MyDataBase(this);
+//        mDataBase = new MyDataBase(this);
         new ASyncDownloader().execute();
 
         try {
@@ -163,7 +164,7 @@ public class MainActivity extends Activity {
 
         if ((phone == null) ||        //not from notifier
                 (!intent.getBooleanExtra("fromSmsReciever", false)))    //if new intent the default is false,
-                // if from receiver search for old conversation
+            // if from receiver search for old conversation
             showConversations();
         else {
             ContactMessages sender = null;
@@ -473,7 +474,8 @@ public class MainActivity extends Activity {
                         if ((app.activityInfo.name).contains("facebook")) {
                             isFacebookInstalled = true;
                             final ActivityInfo activity = app.activityInfo;
-                            final ComponentName name = new ComponentName(activity.applicationInfo.packageName, activity.name);
+                            final ComponentName name = new ComponentName(activity.applicationInfo.packageName,
+                                    activity.name);
                             shareIntent.setComponent(name);
                             context.startActivity(shareIntent);
                             break;
@@ -512,7 +514,8 @@ public class MainActivity extends Activity {
     public void getContactDataFromNumber(String number, Context ctx, ContactMessages contactMessages) {
         Uri contactUri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(number));
 
-        Cursor c = ctx.getContentResolver().query(contactUri, new String[]{PhoneLookup.DISPLAY_NAME, PhoneLookup._ID}, null, null, null);
+        Cursor c = ctx.getContentResolver().query(contactUri, new String[]{PhoneLookup.DISPLAY_NAME,
+                PhoneLookup._ID}, null, null, null);
 
         if (c.moveToFirst()) {
             contactMessages.setName(c.getString(c.getColumnIndex(ContactsContract.PhoneLookup.DISPLAY_NAME)));
@@ -532,10 +535,30 @@ public class MainActivity extends Activity {
         protected Integer doInBackground(Object... params) {
 
             // Set up a XmlPullParser and download data
-            XmlPullParser receivedData = tryDownloadingXmlData();
+            XmlPullParser receivedData = readXmlFileFromAssetsFolder();
+//            XmlPullParser receivedData = tryDownloadingXmlData();
 
             // Try to parse the data. Return records if available
             return tryParsingXmlData(receivedData);
+        }
+
+        private XmlPullParser readXmlFileFromAssetsFolder() {
+            try {
+                InputStream is = getAssets().open("temp_trigger_words.xml");
+                XmlPullParser receivdData = XmlPullParserFactory.newInstance().newPullParser();
+                receivdData.setInput(is, null);
+
+                return receivdData;
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                Log.e(TAG, "IOException in readXmlFileFromAssetsFolder", e);
+            } catch (XmlPullParserException e) {
+                e.printStackTrace();
+                Log.e(TAG, "XmlPullParserException in readXmlFileFromAssetsFolder", e);
+            }
+
+            return null;
         }
 
         private XmlPullParser tryDownloadingXmlData() {
@@ -553,12 +576,11 @@ public class MainActivity extends Activity {
                 // Return the all ready parser back for processing
                 return receivdData;
             } catch (MalformedURLException e) {
-                e.printStackTrace();
+                Log.e(TAG, "MalformedURLExceptio in tryDownloadingXmlData", e);
             } catch (XmlPullParserException e) {
-                e.printStackTrace();
+                Log.e(TAG, "XmlPullParserException in tryDownloadingXmlData", e);
             } catch (IOException e) {
                 Log.e(TAG, "IOException in tryDownloadingXmlData", e);
-                e.printStackTrace();
             }
 
             return null;
@@ -585,57 +607,87 @@ public class MainActivity extends Activity {
             String text = "";
             String url = "";
 
-            int eventType = -1;
-            while (eventType != XmlResourceParser.END_DOCUMENT) {
+            int eventType = xmlData.getEventType();
+            while (eventType != XmlPullParser.END_DOCUMENT) {
                 String tagName = xmlData.getName();
 
-                switch (eventType) {
-                    case XmlResourceParser.TEXT:
-                        if (tagName.equalsIgnoreCase(TEXT_TAG)) {
-                            text = xmlData.getText();
-                        } else if (tagName.equalsIgnoreCase(URL_TAG)) {
-                            url = xmlData.getText();
-                        }
+                if (eventType == XmlPullParser.START_TAG){
+                    if (tagName.equalsIgnoreCase("text")) {
+                        text = xmlData.nextText();
+                        recordsFound++;
+                    } else if (tagName.equalsIgnoreCase("url")) {
+                        url = xmlData.nextText();
+                        recordsFound++;
+                    }
 
+                    if (recordsFound == 2) {
                         publishProgress(text, url);
-                        break;
-                    case XmlPullParser.END_TAG:
-                        if (tagName.equals(ENTRY_TAG)) {
-                            recordsFound++;
-                        }
-                        break;
-                    default:
-                        break;
+                        recordsFound = 0;
+                    }
                 }
-
 
                 eventType = xmlData.next();
             }
 
-            if (recordsFound == 0) {
-                publishProgress();
-            }
 
-            Log.i("APP", "Finished processing " + recordsFound + " records.");
             return recordsFound;
+
+            //            int eventType = -1;
+//            while (eventType != XmlResourceParser.END_DOCUMENT) {
+//                String tagName = xmlData.getName();
+//
+//                switch (eventType) {
+//                    case XmlResourceParser.TEXT:
+//                        if (tagName.equalsIgnoreCase(TEXT_TAG)) {
+//                            text = xmlData.getText();
+//                        } else if (tagName.equalsIgnoreCase(URL_TAG)) {
+//                            url = xmlData.getText();
+//                        }
+//
+//                        publishProgress(text, url);
+//                        break;
+//                    case XmlPullParser.END_TAG:
+//                        if (tagName.equals(ENTRY_TAG)) {
+//                            recordsFound++;
+//                        }
+//                        break;
+//                    default:
+//                        break;
+//                }
+//
+//
+//                eventType = xmlData.next();
+//            }
+//
+//            if (recordsFound == 0) {
+//                publishProgress();
+//            }
+//
+//            Log.i("APP", "Finished processing " + recordsFound + " records.");
+//            return recordsFound;
         }
+
 
         @Override
         protected void onProgressUpdate(String... values) {
 
-            if (values.length == 0) {
-                Log.d("APP", "We have no data");
-            } else if (values.length == 2) {
+            // TODO: insert to db
+            String triggerWord = values[0];
+            String wordImageUrl = values[1];
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(AppContentProvider.COLUMN_TRIGGER_WORD, triggerWord);
+            contentValues.put(AppContentProvider.COLUMN_TRIGGER_WORD_IMAGE_URL, wordImageUrl);
 
-                // TODO: insert to db
-                String triggerWord = values[0];
-                String wordImageUrl = values[1];
+            Log.d(TAG, "triggerWord:::" + triggerWord + " wordImageUrl:::" + wordImageUrl);
 
-                // call DB and insert row
-                // find a way to skip a row if word is already there
+            // call DB and insert row
+            // find a way to skip a row if word is already there
+            Uri uri = getContentResolver().insert(AppContentProvider.CONTENT_URI, contentValues);
+//            mDataBase.addTriggerWord(triggerWord, wordImageUrl);
 
-                mDataBase.addTriggerWord(triggerWord, wordImageUrl);
-            }
+            Toast.makeText(MainActivity.this, "Javacodegeeks: " + uri.toString() + " inserted!", Toast.LENGTH_LONG).show();
+
+
             super.onProgressUpdate(values);
 
         }

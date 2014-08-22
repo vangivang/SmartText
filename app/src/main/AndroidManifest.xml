@@ -70,6 +70,11 @@
             android:name="com.msgme.msgme.CustomIconList"
             android:label="@string/title_activity_icon_list_activity" >
         </activity>
-    </application>
 
+        <provider
+            android:exported="false"
+            android:multiprocess="true"
+            android:authorities="com.msgme.msgme.database.AppContentProvider"
+            android:name=".database.AppContentProvider"/>
+    </application>
 </manifest>

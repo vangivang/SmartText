@@ -15,6 +15,13 @@ android {
             runProguard false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
+
+        debug {
+            signingConfig signingConfigs.debug
+            runProguard false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+            applicationId = "com.msgme.msgme.debug"
+        }
     }
 }
 
