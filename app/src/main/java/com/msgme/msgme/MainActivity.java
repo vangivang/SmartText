@@ -122,7 +122,6 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-//        mDataBase = new MyDataBase(this);
         new ASyncDownloader().execute();
 
         try {
@@ -631,40 +630,6 @@ public class MainActivity extends Activity {
 
 
             return recordsFound;
-
-            //            int eventType = -1;
-//            while (eventType != XmlResourceParser.END_DOCUMENT) {
-//                String tagName = xmlData.getName();
-//
-//                switch (eventType) {
-//                    case XmlResourceParser.TEXT:
-//                        if (tagName.equalsIgnoreCase(TEXT_TAG)) {
-//                            text = xmlData.getText();
-//                        } else if (tagName.equalsIgnoreCase(URL_TAG)) {
-//                            url = xmlData.getText();
-//                        }
-//
-//                        publishProgress(text, url);
-//                        break;
-//                    case XmlPullParser.END_TAG:
-//                        if (tagName.equals(ENTRY_TAG)) {
-//                            recordsFound++;
-//                        }
-//                        break;
-//                    default:
-//                        break;
-//                }
-//
-//
-//                eventType = xmlData.next();
-//            }
-//
-//            if (recordsFound == 0) {
-//                publishProgress();
-//            }
-//
-//            Log.i("APP", "Finished processing " + recordsFound + " records.");
-//            return recordsFound;
         }
 
 

@@ -1,5 +1,7 @@
 package com.msgme.msgme;
 
+import static com.nineoldandroids.view.ViewPropertyAnimator.animate;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
@@ -21,6 +23,7 @@ import android.provider.ContactsContract.Contacts;
 import android.telephony.SmsManager;
 import android.text.Editable;
 import android.text.SpannedString;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -28,6 +31,7 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -37,6 +41,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.msgme.msgme.adapters.MessagesAdapter;
+import com.msgme.msgme.database.AppContentProvider;
 import com.msgme.msgme.vo.ContactMessages;
 import com.msgme.msgme.vo.ContactsMap;
 
@@ -71,6 +76,8 @@ public class PersonMessagesActivity extends Activity {
     public Boolean isRefreshIsNeeded = false;
     private static int mutex = 0;
 
+    private Button mPopUpButton;
+
     Handler regularHandler = new Handler(new Handler.Callback() {
 
 
@@ -103,6 +110,7 @@ public class PersonMessagesActivity extends Activity {
             return true;
         }
     });
+
 
     private class UpdateList extends AsyncTask<String, Integer, String> {
 
@@ -172,7 +180,7 @@ public class PersonMessagesActivity extends Activity {
 
             onDeleteConversationClick();
 
-            onSendSmsClick();
+            setUpSmsSendButtonClickListener();
 
             onIconsClick();
 
@@ -386,57 +394,95 @@ public class PersonMessagesActivity extends Activity {
     }
 
 
-    private void onSendSmsClick() {
-        try {
-            ImageView btnSend = (ImageView) findViewById(R.id.btnSend);
-            btnSend.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+    private void setUpSmsSendButtonClickListener() {
 
-                    String contact;
+        ImageView btnSend = (ImageView) findViewById(R.id.btnSend);
+        btnSend.setOnClickListener(new View.OnClickListener() {
+                                       @Override
+                                       public void onClick(View v) {
 
-                    MultiAutoCompleteTextView txtPhoneNumber = (MultiAutoCompleteTextView) findViewById(R.id
-                            .txtPhoneNumber);
+                                           // Get the outgoing text and trim from both ends of the string white spaces.
+                                           // + inside the regex denotes consecutive white spaces as well (not only a
+                                           // single one)
+                                           String outMessageText = tiMessageBody.getText(true);
 
-                    //Send from person messages view
-                    if (txtPhoneNumber.getVisibility() == View.GONE)
-                        contact = contactMessages.getPhone();
-                    else
-                        contact = txtPhoneNumber.getText().toString();
+                                           if (!TextUtils.isEmpty(outMessageText)) {
 
-                    //Extract the numbers to send
-                    try {
-                        List<String> numbersToSend = extractNumbers(contact);
+                                               String whiteSpaceTrimmedText = outMessageText.replaceAll
+                                                       ("^\\s+|\\s+$", "");
 
-                        String messageTosend = tiMessageBody.getText(true);
-                        for (int i = 0; i < numbersToSend.size(); i++) {
-                            sendSMS(numbersToSend.get(i), messageTosend);
-                        }
+                                               // Split the string using these delimiters. Again + denotes consecutive
+                                               // chars as well not only a single one
+                                               String delims = "[ .,?!]+";
+                                               String[] tokens = whiteSpaceTrimmedText.split(delims);
 
-                        tiMessageBody.init();
+                                               // For each word token in array, check in data base if there is a
+                                               // corresponding word
+                                               String triggerWordUrl = null;
+                                               String[] columns = {AppContentProvider.COLUMN_TRIGGER_WORD,
+                                                       AppContentProvider.COLUMN_TRIGGER_WORD_IMAGE_URL};
 
-                        if (getIntent().getBooleanExtra("isNewMessage", false)) {
-                            setResult(RESULT_OK);
+                                               for (String string : tokens) {
+                                                   Cursor triggerWordsCursor = getContentResolver().query
+                                                           (AppContentProvider.CONTENT_URI,
+                                                                   columns, "UPPER(" + AppContentProvider
+                                                                           .COLUMN_TRIGGER_WORD + ") =?",
+                                                                   new String[]{string.toUpperCase()}, null);
 
-                            finish();
-                        } else {
-                            new UpdateList().execute();
+                                                   // If we have results, save the url of that word token and exit loop
+                                                   // We leave the loop because currently, one word is enough
+                                                   if (triggerWordsCursor.moveToFirst()) {
+                                                       triggerWordUrl = triggerWordsCursor.getString(1);
+                                                       break;
+                                                   }
+                                               }
 
-                            isMessageSent = true;
-                        }
+                                               // If we have a url, we can execute a pop up animation
+                                               if (triggerWordUrl != null) {
 
-                    } catch (InvalidParameterException ipe) {
-                        showAlertCantSendMessage();
-                    } catch (Exception e) {
+                                                   // TODO: enter pop up animation
+                                                   mPopUpButton = (Button) findViewById(R.id.popupButton);
+                                                   animate(mPopUpButton).setDuration(300).alpha(1.0f);
+                                               } else {
 
-                    }
-                }
+                                                   // We remove the pop up here in case there is no url
+                                                   animate(mPopUpButton).setDuration(300).alpha(0.3f);
+                                               }
 
-            });
-        } catch (Exception e) {
-            //Some error
-        }
 
+                                               // Continue with SMS stuff...
+                                               String contact;
+                                               MultiAutoCompleteTextView txtPhoneNumber = (MultiAutoCompleteTextView)
+                                                       findViewById(R.id.txtPhoneNumber);
+
+                                               //Send from person messages view
+                                               if (txtPhoneNumber.getVisibility() == View.GONE) {
+                                                   contact = contactMessages.getPhone();
+                                               } else {
+                                                   contact = txtPhoneNumber.getText().toString();
+                                               }
+
+                                               //Extract the numbers to send
+                                               List<String> numbersToSend = extractNumbers(contact);
+
+                                               String messageTosend = tiMessageBody.getText(true);
+                                               for (int i = 0; i < numbersToSend.size(); i++) {
+                                                   sendSMS(numbersToSend.get(i), messageTosend);
+                                               }
+                                               tiMessageBody.init();
+
+                                               if (getIntent().getBooleanExtra("isNewMessage", false)) {
+                                                   setResult(RESULT_OK);
+                                                   finish();
+                                               } else {
+                                                   new UpdateList().execute();
+                                                   isMessageSent = true;
+                                               }
+                                           }
+                                       }
+                                   }
+
+        );
     }
 
     private void addToSentContenProvider(String phoneNumber, String message) {
@@ -634,7 +680,8 @@ public class PersonMessagesActivity extends Activity {
             case PICK_CONTACT: {
                 if (resultCode == RESULT_OK) {
                     //CONTACT Selector
-                    MultiAutoCompleteTextView txtPhoneNo = (MultiAutoCompleteTextView) findViewById(R.id.txtPhoneNumber);
+                    MultiAutoCompleteTextView txtPhoneNo = (MultiAutoCompleteTextView) findViewById(R.id
+                            .txtPhoneNumber);
 
                     List<String> allNumbers = new ArrayList<String>();
                     Cursor cursor = null;
@@ -645,7 +692,8 @@ public class PersonMessagesActivity extends Activity {
                         Uri result = data.getData();
                         String id = result.getLastPathSegment();
 
-                        cursor = getContentResolver().query(Phone.CONTENT_URI, null, Phone.CONTACT_ID + "=?", new String[]{id}, null);
+                        cursor = getContentResolver().query(Phone.CONTENT_URI, null, Phone.CONTACT_ID + "=?",
+                                new String[]{id}, null);
                         phoneIdx = cursor.getColumnIndex(Phone.DATA);
 
                         if (cursor.moveToFirst()) {

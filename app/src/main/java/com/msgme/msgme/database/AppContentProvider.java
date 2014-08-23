@@ -20,12 +20,6 @@ import java.util.HashMap;
  */
 public class AppContentProvider extends ContentProvider {
 
-    // fields for my content provider
-    private static final String PROVIDER_NAME = "com.msgme.msgme.database.AppContentProvider";
-    private static final String URL = "content://" + PROVIDER_NAME + "/trigger_words";
-    public static final Uri CONTENT_URI = Uri.parse(URL);
-
-
     // database creation stuff
     private SQLiteDatabase database;
     private static final String DATABASE_NAME = "trigger_words.db";
@@ -42,6 +36,12 @@ public class AppContentProvider extends ContentProvider {
             + COLUMN_TRIGGER_WORD_IMAGE_URL + " text not null unique"
             + ");";
 
+    // fields for my content provider
+    private static final String PROVIDER_NAME = "com.msgme.msgme.database.AppContentProvider";
+    private static final String URL = "content://" + PROVIDER_NAME + "/%s";
+    public static final Uri CONTENT_URI = formUri(TABLE_TRIGGER_WORDS);
+//    public static final Uri CONTENT_URI = Uri.parse(URL);
+
     // integer values used in content URI
     private static final int TRIGGER_WORDS = 1;
     private static final int TRIGGER_WORD_ID = 2;
@@ -53,8 +53,7 @@ public class AppContentProvider extends ContentProvider {
     static final UriMatcher uriMatcher;
     static{
         uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-        uriMatcher.addURI(PROVIDER_NAME, "trigger_word", TRIGGER_WORDS);
-        uriMatcher.addURI(PROVIDER_NAME, "trigger_words/#", TRIGGER_WORD_ID);
+        uriMatcher.addURI(PROVIDER_NAME, CONTENT_URI.getPath().substring(1), TRIGGER_WORDS);
     }
 
     @Override
@@ -74,18 +73,15 @@ public class AppContentProvider extends ContentProvider {
         // the TABLE_NAME to query on
         queryBuilder.setTables(TABLE_TRIGGER_WORDS);
 
-        switch (uriMatcher.match(uri)) {
-
-            // maps all database column names
-            case TRIGGER_WORDS:
-                queryBuilder.setProjectionMap(WordsMap);
-                break;
-            case TRIGGER_WORD_ID:
-                queryBuilder.appendWhere( COLUMN_ID + "=" + uri.getLastPathSegment());
-                break;
-            default:
-                throw new IllegalArgumentException("Unknown URI " + uri);
-        }
+//        switch (uriMatcher.match(uri)) {
+//
+//            // maps all database column names
+//            case TRIGGER_WORDS:
+//
+//                break;
+//            default:
+//                throw new IllegalArgumentException("Unknown URI " + uri);
+//        }
 
         if (TextUtils.isEmpty(sortOrder)){
             // No sorting-> sort on names by default
@@ -94,6 +90,7 @@ public class AppContentProvider extends ContentProvider {
 
         Cursor cursor = queryBuilder.query(database, projection, selection,
                 selectionArgs, null, null, sortOrder);
+
 
         /**
          * register to watch a content URI for changes
@@ -161,5 +158,10 @@ public class AppContentProvider extends ContentProvider {
             db.execSQL("DROP TABLE IF EXISTS " +  TABLE_TRIGGER_WORDS);
             onCreate(db);
         }
+    }
+
+    protected static Uri formUri(String tableName) {
+        // Parse the CONTENT_URI for this entity
+        return Uri.parse(String.format(URL, tableName));
     }
 }

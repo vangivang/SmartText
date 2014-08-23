@@ -463,20 +463,23 @@ public class TextImage implements TextWatcher, OnLongClickListener {
     public static String toText(Editable fromControl, boolean showSymbols) {
 
         String tmp = Html.toHtml((Spanned) fromControl);
-        StringBuilder res = new StringBuilder(tmp);
-        int i, endText;
+        if (!TextUtils.isEmpty(tmp)){
+            StringBuilder res = new StringBuilder(tmp);
+            int i, endText;
 
-        while ((i = res.indexOf(HTML_IMG_SRC_TAG)) >= 0) {
-            endText = res.indexOf("\">", i);
-            tmp = res.substring(i + HTML_IMG_SRC_TAG.length(), endText);
-            res.replace(i, endText + 2, tmp);                            //endText+2 is the Tag end ( == "\">".length())
+            while ((i = res.indexOf(HTML_IMG_SRC_TAG)) >= 0) {
+                endText = res.indexOf("\">", i);
+                tmp = res.substring(i + HTML_IMG_SRC_TAG.length(), endText);
+                res.replace(i, endText + 2, tmp);                            //endText+2 is the Tag end ( == "\">".length())
+            }
+
+            res = changeLinkstate(res, !showSymbols, showSymbols);
+
+            tmp = Html.fromHtml(res.toString()).toString();
+            return tmp.substring(0, tmp.length() - 2);
+        } else {
+            return null;
         }
-
-        res = changeLinkstate(res, !showSymbols, showSymbols);
-
-        tmp = Html.fromHtml(res.toString()).toString();
-        return tmp.substring(0, tmp.length() - 2);
-
     }
 
     /*
