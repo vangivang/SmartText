@@ -398,91 +398,91 @@ public class PersonMessagesActivity extends Activity {
 
         ImageView btnSend = (ImageView) findViewById(R.id.btnSend);
         btnSend.setOnClickListener(new View.OnClickListener() {
-                                       @Override
-                                       public void onClick(View v) {
+            @Override
+            public void onClick(View v) {
 
-                                           // Get the outgoing text and trim from both ends of the string white spaces.
-                                           // + inside the regex denotes consecutive white spaces as well (not only a
-                                           // single one)
-                                           String outMessageText = tiMessageBody.getText(true);
+                // Get the outgoing text and trim from both ends of the string white spaces.
+                // + inside the regex denotes consecutive white spaces as well (not only a
+                // single one)
+                String outMessageText = tiMessageBody.getText(true);
 
-                                           if (!TextUtils.isEmpty(outMessageText)) {
+                if (!TextUtils.isEmpty(outMessageText)) {
 
-                                               String whiteSpaceTrimmedText = outMessageText.replaceAll
-                                                       ("^\\s+|\\s+$", "");
+                    String whiteSpaceTrimmedText = outMessageText.replaceAll
+                            ("^\\s+|\\s+$", "");
 
-                                               // Split the string using these delimiters. Again + denotes consecutive
-                                               // chars as well not only a single one
-                                               String delims = "[ .,?!]+";
-                                               String[] tokens = whiteSpaceTrimmedText.split(delims);
+                    // Split the string using these delimiters. Again + denotes consecutive
+                    // chars as well not only a single one
+                    String delims = "[ .,?!]+";
+                    String[] tokens = whiteSpaceTrimmedText.split(delims);
 
-                                               // For each word token in array, check in data base if there is a
-                                               // corresponding word
-                                               String triggerWordUrl = null;
-                                               String[] columns = {AppContentProvider.COLUMN_TRIGGER_WORD,
-                                                       AppContentProvider.COLUMN_TRIGGER_WORD_IMAGE_URL};
+                    // For each word token in array, check in data base if there is a
+                    // corresponding word
+                    String triggerWordUrl = null;
+                    String[] columns = {AppContentProvider.COLUMN_TRIGGER_WORD,
+                            AppContentProvider.COLUMN_TRIGGER_WORD_IMAGE_URL};
 
-                                               for (String string : tokens) {
-                                                   Cursor triggerWordsCursor = getContentResolver().query
-                                                           (AppContentProvider.CONTENT_URI,
-                                                                   columns, "UPPER(" + AppContentProvider
-                                                                           .COLUMN_TRIGGER_WORD + ") =?",
-                                                                   new String[]{string.toUpperCase()}, null);
+                    for (String string : tokens) {
+                        Cursor triggerWordsCursor = getContentResolver().query
+                                (AppContentProvider.CONTENT_URI,
+                                        columns, "UPPER(" + AppContentProvider
+                                                .COLUMN_TRIGGER_WORD + ") =?",
+                                        new String[]{string.toUpperCase()}, null);
 
-                                                   // If we have results, save the url of that word token and exit loop
-                                                   // We leave the loop because currently, one word is enough
-                                                   if (triggerWordsCursor.moveToFirst()) {
-                                                       triggerWordUrl = triggerWordsCursor.getString(1);
-                                                       break;
-                                                   }
-                                               }
+                        // If we have results, save the url of that word token and exit loop
+                        // We leave the loop because currently, one word is enough
+                        if (triggerWordsCursor.moveToFirst()) {
+                            triggerWordUrl = triggerWordsCursor.getString(1);
+                            break;
+                        }
+                    }
 
-                                               // If we have a url, we can execute a pop up animation
-                                               if (triggerWordUrl != null) {
+                    // If we have a url, we can execute a pop up animation
+                    if (triggerWordUrl != null) {
 
-                                                   // TODO: enter pop up animation
-                                                   mPopUpButton = (Button) findViewById(R.id.popupButton);
-                                                   animate(mPopUpButton).setDuration(300).alpha(1.0f);
-                                               } else {
+                        // TODO: enter pop up animation
+                        mPopUpButton = (Button) findViewById(R.id.popupButton);
+                        animate(mPopUpButton).setDuration(300).alpha(1.0f);
+                    } else {
 
-                                                   // We remove the pop up here in case there is no url
-                                                   animate(mPopUpButton).setDuration(300).alpha(0.3f);
-                                               }
+                        // We remove the pop up here in case there is no url
+                        animate(mPopUpButton).setDuration(300).alpha(0.3f);
+                    }
 
 
-                                               // Continue with SMS stuff...
-                                               String contact;
-                                               MultiAutoCompleteTextView txtPhoneNumber = (MultiAutoCompleteTextView)
-                                                       findViewById(R.id.txtPhoneNumber);
+                    // Continue with SMS stuff...
+                    String contact;
+                    MultiAutoCompleteTextView txtPhoneNumber = (MultiAutoCompleteTextView)
+                            findViewById(R.id.txtPhoneNumber);
 
-                                               //Send from person messages view
-                                               if (txtPhoneNumber.getVisibility() == View.GONE) {
-                                                   contact = contactMessages.getPhone();
-                                               } else {
-                                                   contact = txtPhoneNumber.getText().toString();
-                                               }
+                    //Send from person messages view
+                    if (txtPhoneNumber.getVisibility() == View.GONE) {
+                        contact = contactMessages.getPhone();
+                    } else {
+                        contact = txtPhoneNumber.getText().toString();
+                    }
 
-                                               //Extract the numbers to send
-                                               List<String> numbersToSend = extractNumbers(contact);
+                    //Extract the numbers to send
+                    List<String> numbersToSend = extractNumbers(contact);
 
-                                               String messageTosend = tiMessageBody.getText(true);
-                                               for (int i = 0; i < numbersToSend.size(); i++) {
-                                                   sendSMS(numbersToSend.get(i), messageTosend);
-                                               }
-                                               tiMessageBody.init();
+                    String messageTosend = tiMessageBody.getText(true);
+                    for (int i = 0; i < numbersToSend.size(); i++) {
+                        sendSMS(numbersToSend.get(i), messageTosend);
+                    }
+                    tiMessageBody.init();
 
-                                               if (getIntent().getBooleanExtra("isNewMessage", false)) {
-                                                   setResult(RESULT_OK);
-                                                   finish();
-                                               } else {
-                                                   new UpdateList().execute();
-                                                   isMessageSent = true;
-                                               }
-                                           }
-                                       }
-                                   }
+                    if (getIntent().getBooleanExtra("isNewMessage", false)) {
+                        setResult(RESULT_OK);
+                        finish();
+                    } else {
+                        new UpdateList().execute();
+                        isMessageSent = true;
+                    }
+                }
 
-        );
+            }
+        });
+
     }
 
     private void addToSentContenProvider(String phoneNumber, String message) {
