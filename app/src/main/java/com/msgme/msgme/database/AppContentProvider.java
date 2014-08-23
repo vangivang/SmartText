@@ -38,8 +38,8 @@ public class AppContentProvider extends ContentProvider {
             + TABLE_TRIGGER_WORDS
             + "("
             + COLUMN_ID + " integer primary key autoincrement, "
-            + COLUMN_TRIGGER_WORD + " text not null, "
-            + COLUMN_TRIGGER_WORD_IMAGE_URL + " text not null"
+            + COLUMN_TRIGGER_WORD + " text not null unique, "
+            + COLUMN_TRIGGER_WORD_IMAGE_URL + " text not null unique"
             + ");";
 
     // integer values used in content URI
@@ -119,7 +119,7 @@ public class AppContentProvider extends ContentProvider {
 
     @Override
     public Uri insert(Uri uri, ContentValues values) {
-        long row = database.insert(TABLE_TRIGGER_WORDS, null, values);
+        long row = database.insertWithOnConflict(TABLE_TRIGGER_WORDS, null, values, SQLiteDatabase.CONFLICT_REPLACE);
 
         // If record is added successfully
         if(row > 0) {

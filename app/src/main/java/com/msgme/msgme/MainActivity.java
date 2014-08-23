@@ -683,10 +683,7 @@ public class MainActivity extends Activity {
             // call DB and insert row
             // find a way to skip a row if word is already there
             Uri uri = getContentResolver().insert(AppContentProvider.CONTENT_URI, contentValues);
-//            mDataBase.addTriggerWord(triggerWord, wordImageUrl);
-
-            Toast.makeText(MainActivity.this, "Javacodegeeks: " + uri.toString() + " inserted!", Toast.LENGTH_LONG).show();
-
+            Log.d(TAG, uri.toString() + " inserted!");
 
             super.onProgressUpdate(values);
 
