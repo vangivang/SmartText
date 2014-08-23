@@ -13,6 +13,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.drawable.TransitionDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -33,6 +34,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.MultiAutoCompleteTextView;
@@ -76,7 +78,7 @@ public class PersonMessagesActivity extends Activity {
     public Boolean isRefreshIsNeeded = false;
     private static int mutex = 0;
 
-    private Button mPopUpButton;
+    private ImageButton mPopUpButton;
 
     Handler regularHandler = new Handler(new Handler.Callback() {
 
@@ -240,7 +242,7 @@ public class PersonMessagesActivity extends Activity {
 
     @Override
     protected void onNewIntent(Intent intent) {
-        // TODO Auto-generated method stub
+
         super.onNewIntent(intent);
     }
 
@@ -440,13 +442,19 @@ public class PersonMessagesActivity extends Activity {
                     // If we have a url, we can execute a pop up animation
                     if (triggerWordUrl != null) {
 
-                        // TODO: enter pop up animation
-                        mPopUpButton = (Button) findViewById(R.id.popupButton);
-                        animate(mPopUpButton).setDuration(300).alpha(1.0f);
+                        // TODO: enter pop up button transition animation
+                        mPopUpButton = (ImageButton) findViewById(R.id.popupButton);
+                        TransitionDrawable transitionDrawable = (TransitionDrawable) mPopUpButton.getDrawable();
+                        transitionDrawable.setCrossFadeEnabled(true);
+                        transitionDrawable.startTransition(300);
+//                        animate(mPopUpButton).setDuration(300).alpha(1.0f);
                     } else {
 
                         // We remove the pop up here in case there is no url
-                        animate(mPopUpButton).setDuration(300).alpha(0.3f);
+                        TransitionDrawable transitionDrawable = (TransitionDrawable) mPopUpButton.getDrawable();
+                        transitionDrawable.setCrossFadeEnabled(true);
+                        transitionDrawable.reverseTransition(300);
+//                        animate(mPopUpButton).setDuration(300).alpha(0.3f);
                     }
 
 
@@ -482,7 +490,6 @@ public class PersonMessagesActivity extends Activity {
 
             }
         });
-
     }
 
     private void addToSentContenProvider(String phoneNumber, String message) {

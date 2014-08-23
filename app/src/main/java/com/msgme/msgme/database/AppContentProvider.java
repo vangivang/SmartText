@@ -72,17 +72,6 @@ public class AppContentProvider extends ContentProvider {
 
         // the TABLE_NAME to query on
         queryBuilder.setTables(TABLE_TRIGGER_WORDS);
-
-//        switch (uriMatcher.match(uri)) {
-//
-//            // maps all database column names
-//            case TRIGGER_WORDS:
-//
-//                break;
-//            default:
-//                throw new IllegalArgumentException("Unknown URI " + uri);
-//        }
-
         if (TextUtils.isEmpty(sortOrder)){
             // No sorting-> sort on names by default
             sortOrder = COLUMN_TRIGGER_WORD;

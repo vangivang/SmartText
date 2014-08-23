@@ -636,22 +636,17 @@ public class MainActivity extends Activity {
         @Override
         protected void onProgressUpdate(String... values) {
 
-            // TODO: insert to db
             String triggerWord = values[0];
             String wordImageUrl = values[1];
             ContentValues contentValues = new ContentValues();
             contentValues.put(AppContentProvider.COLUMN_TRIGGER_WORD, triggerWord);
             contentValues.put(AppContentProvider.COLUMN_TRIGGER_WORD_IMAGE_URL, wordImageUrl);
 
-            Log.d(TAG, "triggerWord:::" + triggerWord + " wordImageUrl:::" + wordImageUrl);
-
             // call DB and insert row
-            // find a way to skip a row if word is already there
             Uri uri = getContentResolver().insert(AppContentProvider.CONTENT_URI, contentValues);
             Log.d(TAG, uri.toString() + " inserted!");
 
             super.onProgressUpdate(values);
-
         }
     }
 

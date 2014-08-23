@@ -45,13 +45,13 @@ public class IconAdapter implements ListAdapter, View.OnClickListener
 
 	@Override
 	public long getItemId(int arg0) {
-		// TODO Auto-generated method stub
+
 		return 0;
 	}
 
 	@Override
 	public int getItemViewType(int arg0) {
-		// TODO Auto-generated method stub
+
 		return 0;
 	}
 
@@ -102,7 +102,7 @@ public class IconAdapter implements ListAdapter, View.OnClickListener
 
 	@Override
 	public boolean hasStableIds() {
-		// TODO Auto-generated method stub
+
 		return false;
 	}
 
@@ -113,31 +113,31 @@ public class IconAdapter implements ListAdapter, View.OnClickListener
 
 	@Override
 	public void registerDataSetObserver(DataSetObserver arg0) {
-		// TODO Auto-generated method stub
+
 
 	}
 
 	@Override
 	public void unregisterDataSetObserver(DataSetObserver arg0) {
-		// TODO Auto-generated method stub
+
 
 	}
 
 	@Override
 	public void onClick(View arg0) {
-		// TODO Auto-generated method stub
+
 
 	}
 
 	@Override
 	public boolean areAllItemsEnabled() {
-		// TODO Auto-generated method stub
+
 		return true;
 	}
 
 	@Override
 	public boolean isEnabled(int arg0) {
-		// TODO Auto-generated method stub
+
 		return true;
 	}
 
