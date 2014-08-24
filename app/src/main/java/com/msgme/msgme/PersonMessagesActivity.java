@@ -188,6 +188,8 @@ public class PersonMessagesActivity extends Activity {
 
             fillContactsAutoComplete();
 
+            mPopUpButton = (ImageButton) findViewById(R.id.popupButton);
+
             EditText etMessageBody = (EditText) findViewById(R.id.etMessageBody);
             txtPhoneNo = (MultiAutoCompleteTextView) findViewById(R.id.txtPhoneNumber);
 
@@ -419,7 +421,7 @@ public class PersonMessagesActivity extends Activity {
                     String[] tokens = whiteSpaceTrimmedText.split(delims);
 
                     // For each word token in array, check in data base if there is a
-                    // corresponding word
+                    // corresponding trigger word
                     String triggerWordUrl = null;
                     String[] columns = {AppContentProvider.COLUMN_TRIGGER_WORD,
                             AppContentProvider.COLUMN_TRIGGER_WORD_IMAGE_URL};
@@ -443,20 +445,24 @@ public class PersonMessagesActivity extends Activity {
                     if (triggerWordUrl != null) {
 
                         // TODO: enter pop up button transition animation
-                        mPopUpButton = (ImageButton) findViewById(R.id.popupButton);
-                        TransitionDrawable transitionDrawable = (TransitionDrawable) mPopUpButton.getDrawable();
+
+                        // TODO: get this value from preferences or main application
+                        int timeToResetButtonDrawable = 0;
+
+                        final TransitionDrawable transitionDrawable = (TransitionDrawable) mPopUpButton.getDrawable();
                         transitionDrawable.setCrossFadeEnabled(true);
                         transitionDrawable.startTransition(300);
-//                        animate(mPopUpButton).setDuration(300).alpha(1.0f);
+
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                transitionDrawable.reverseTransition(300);
+
+                            }
+                        }, 350 + timeToResetButtonDrawable);
                     } else {
-
-                        // We remove the pop up here in case there is no url
-                        TransitionDrawable transitionDrawable = (TransitionDrawable) mPopUpButton.getDrawable();
-                        transitionDrawable.setCrossFadeEnabled(true);
-                        transitionDrawable.reverseTransition(300);
-//                        animate(mPopUpButton).setDuration(300).alpha(0.3f);
+                        Log.d("LOGGY", "We have no url");
                     }
-
 
                     // Continue with SMS stuff...
                     String contact;

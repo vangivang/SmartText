@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<trigger_words>
+    <entry>
+        <text>Nuggets</text>
+        <url>http://elevate.co.il/yaron/mockup/pics/nuggets.png</url>
+    </entry>
+
+    <entry>
+        <text>Crembo</text>
+        <url>http://elevate.co.il/yaron/mockup/pics/Crembo.png</url>
+    </entry>
+
+    <entry>
+        <text>Mango</text>
+        <url>http://elevate.co.il/yaron/mockup/pics/Mango.png</url>
+    </entry>
+
+</trigger_words>

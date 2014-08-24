@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<trigger_words>
+    <language name="english">
+        <entry>
+            <text>Pizza</text>
+            <url>http://elevate.co.il/yaron/mockup/pics/pizza.png</url>
+        </entry>
+
+        <entry>
+            <text>Hamburger</text>
+            <url>http://elevate.co.il/yaron/mockup/pics/hamburger.png</url>
+        </entry>
+
+        <entry>
+            <text>Sushi</text>
+            <url>http://elevate.co.il/yaron/mockup/pics/sushi.png</url>
+        </entry>
+
+    </language>
+
+    <language name="french">
+        <entry>
+            <text>Pouize</text>
+            <url>http://elevate.co.il/yaron/mockup/pics/pizza.png</url>
+        </entry>
+
+        <entry>
+            <text>Habourgerough</text>
+            <url>http://elevate.co.il/yaron/mockup/pics/hamburger.png</url>
+        </entry>
+
+        <entry>
+            <text>Sushiwe</text>
+            <url>http://elevate.co.il/yaron/mockup/pics/sushi.png</url>
+        </entry>
+
+    </language>
+
+</trigger_words>

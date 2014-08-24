@@ -122,7 +122,10 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        new ASyncDownloader().execute();
+        String[] xmlUrls = {"temp_trigger_words_a.xml", "temp_trigger_words_b.xml"};
+
+        ASyncDownloader downloader = new ASyncDownloader(xmlUrls);
+        downloader.execute(xmlUrls);
 
         try {
 
@@ -524,30 +527,52 @@ public class MainActivity extends Activity {
         c.close();
     }
 
-    private class ASyncDownloader extends AsyncTask<Object, String, Integer> {
 
-        public static final String TEXT_TAG = "text";
-        public static final String URL_TAG = "url";
-        public static final String ENTRY_TAG = "entry";
+    /**
+     * Will download XML files from url and insert them into DB
+     */
+    private class ASyncDownloader extends AsyncTask<String, String, Void> {
 
-        @Override
-        protected Integer doInBackground(Object... params) {
+        private String[] mUrls;
 
-            // Set up a XmlPullParser and download data
-            XmlPullParser receivedData = readXmlFileFromAssetsFolder();
-//            XmlPullParser receivedData = tryDownloadingXmlData();
-
-            // Try to parse the data. Return records if available
-            return tryParsingXmlData(receivedData);
+        private ASyncDownloader(String[] urls) {
+            mUrls = urls;
         }
 
-        private XmlPullParser readXmlFileFromAssetsFolder() {
-            try {
-                InputStream is = getAssets().open("temp_trigger_words.xml");
-                XmlPullParser receivdData = XmlPullParserFactory.newInstance().newPullParser();
-                receivdData.setInput(is, null);
+        @Override
+        protected Void doInBackground(String... params) {
 
-                return receivdData;
+            XmlPullParser receivedData;
+            int urlCounter = 0;
+
+            while (urlCounter < mUrls.length) {
+                String path = params[urlCounter];
+
+                // Set up a XmlPullParser and download data
+                receivedData = readXmlFileFromAssetsFolder(path);
+//                    receivedData = tryDownloadingXmlData(path);
+
+                try {
+                    processReceivedData(receivedData);
+                } catch (XmlPullParserException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                urlCounter++;
+            }
+
+            return null;
+        }
+
+        private XmlPullParser readXmlFileFromAssetsFolder(String fileName) {
+            try {
+                InputStream is = getAssets().open(fileName);
+                XmlPullParser recievdData = XmlPullParserFactory.newInstance().newPullParser();
+                recievdData.setInput(is, null);
+
+                return recievdData;
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -560,20 +585,15 @@ public class MainActivity extends Activity {
             return null;
         }
 
-        private XmlPullParser tryDownloadingXmlData() {
+        private XmlPullParser tryDownloadingXmlData(String url) {
 
             try {
-                // URL for server
-                URL xmlUrl = new URL(QUERY_URL);
 
-                // Create the parser using its factory
+                URL xmlUrl = new URL(url);
                 XmlPullParser receivdData = XmlPullParserFactory.newInstance().newPullParser();
-
-                // Assign the url to this parser as an open stream
                 receivdData.setInput(xmlUrl.openStream(), null);
-
-                // Return the all ready parser back for processing
                 return receivdData;
+
             } catch (MalformedURLException e) {
                 Log.e(TAG, "MalformedURLExceptio in tryDownloadingXmlData", e);
             } catch (XmlPullParserException e) {
@@ -585,21 +605,7 @@ public class MainActivity extends Activity {
             return null;
         }
 
-        private int tryParsingXmlData(XmlPullParser receivedData) {
-
-            if (receivedData != null) {
-                try {
-                    return processReceivedData(receivedData);
-                } catch (XmlPullParserException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            return 0;
-        }
-
-        private int processReceivedData(XmlPullParser xmlData) throws XmlPullParserException, IOException {
+        private void processReceivedData(XmlPullParser xmlData) throws XmlPullParserException, IOException {
 
             int recordsFound = 0;
 
@@ -610,7 +616,7 @@ public class MainActivity extends Activity {
             while (eventType != XmlPullParser.END_DOCUMENT) {
                 String tagName = xmlData.getName();
 
-                if (eventType == XmlPullParser.START_TAG){
+                if (eventType == XmlPullParser.START_TAG) {
                     if (tagName.equalsIgnoreCase("text")) {
                         text = xmlData.nextText();
                         recordsFound++;
@@ -618,24 +624,27 @@ public class MainActivity extends Activity {
                         url = xmlData.nextText();
                         recordsFound++;
                     }
+                }
 
-                    if (recordsFound == 2) {
-                        publishProgress(text, url);
-                        recordsFound = 0;
-                    }
+                // If we have 2 records found, it means the xml produced 1 text + 1 url... so lets insert to DB
+                if (recordsFound == 2) {
+                    publishProgress(text, url);
+                    recordsFound = 0;
+                } else {
+                    Log.d("LOGGY", "No data found in current url");
                 }
 
                 eventType = xmlData.next();
             }
-
-
-            return recordsFound;
         }
-
 
         @Override
         protected void onProgressUpdate(String... values) {
+            insertRowIntoDatabase(values);
+            super.onProgressUpdate(values);
+        }
 
+        private void insertRowIntoDatabase(String[] values) {
             String triggerWord = values[0];
             String wordImageUrl = values[1];
             ContentValues contentValues = new ContentValues();
@@ -645,8 +654,6 @@ public class MainActivity extends Activity {
             // call DB and insert row
             Uri uri = getContentResolver().insert(AppContentProvider.CONTENT_URI, contentValues);
             Log.d(TAG, uri.toString() + " inserted!");
-
-            super.onProgressUpdate(values);
         }
     }
 
