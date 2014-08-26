@@ -435,7 +435,7 @@ public class PersonMessagesActivity extends Activity {
                             public void onClick(View v) {
                                 //TODO: open pop up view animatedly
                                 closeKeyboard(mPopUpButton);
-                                Toast.makeText(PersonMessagesActivity.this, "Clicked", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(PersonMessagesActivity.this, "Pop up clicked... animate view", Toast.LENGTH_LONG).show();
                             }
                         });
 
