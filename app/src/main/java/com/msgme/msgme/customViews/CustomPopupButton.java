@@ -17,8 +17,9 @@ import com.msgme.msgme.R;
  */
 public class CustomPopupButton extends RelativeLayout {
 
-    private ImageButton mPopUpButtonBG;
+    private ImageView mPopUpButtonBG;
     private ImageView mPopUpButtonCoupon;
+    private RelativeLayout mPopUpButtonRootView;
 
     public CustomPopupButton(Context context) {
         super(context);
@@ -33,17 +34,13 @@ public class CustomPopupButton extends RelativeLayout {
     private void init() {
         LayoutInflater layoutInflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = layoutInflater.inflate(R.layout.custom_popup_button_layout, this, true);
-        mPopUpButtonBG = (ImageButton) view.findViewById(R.id.popupButton);
+        mPopUpButtonBG = (ImageView) view.findViewById(R.id.popupButton);
         mPopUpButtonCoupon = (ImageView) view.findViewById(R.id.popupButtonCoupon);
+        mPopUpButtonRootView = (RelativeLayout) view.findViewById(R.id.popup_root);
+    }
 
-
-
-//        findViewById(R.id.popup_root).setOnClickListener(new OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//            }
-//        });
+    public void setOnClickListenerToRootView(View.OnClickListener onClickListener){
+        mPopUpButtonRootView.setOnClickListener(onClickListener);
     }
 
     public void onTriggerWordFound(final int timeToResetButtonDrawable, final int popupTransitionDuration){
@@ -56,11 +53,14 @@ public class CustomPopupButton extends RelativeLayout {
         popupCouponTransitionDrawable.startTransition(popupTransitionDuration);
         popupBgTransitionDrawable.startTransition(popupTransitionDuration);
 
+        //TODO: animate pulsating coupon icon....
+
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 popupBgTransitionDrawable.reverseTransition(popupTransitionDuration);
                 popupCouponTransitionDrawable.reverseTransition(popupTransitionDuration);
+                mPopUpButtonRootView.setOnClickListener(null);
 
             }
         }, 350 + timeToResetButtonDrawable);

@@ -59,8 +59,6 @@ public class PersonMessagesActivity extends Activity {
     public static final int GET_ICON_FROM_LIST = 1;
 
     // TODO: Perhaps get this from server aswell?
-    public static final int POP_UP_TRANSITION_DURATION = 500;
-
     public ContactMessages contactMessages = null;
 
     //-------------
@@ -429,19 +427,16 @@ public class PersonMessagesActivity extends Activity {
                         // TODO: get this value from preferences or main application
                         int timeToResetButtonDrawable = 5000;
 
-                        mPopUpButton.onTriggerWordFound(timeToResetButtonDrawable, POP_UP_TRANSITION_DURATION);
+                        // TODO: Perhaps get transition duration from server as well?
+                        mPopUpButton.onTriggerWordFound(timeToResetButtonDrawable, 500);
+                        mPopUpButton.setOnClickListenerToRootView(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                //TODO: open pop up view animatedly
+                                Toast.makeText(PersonMessagesActivity.this, "Clicked", Toast.LENGTH_SHORT).show();
+                            }
+                        });
 
-//                        final TransitionDrawable transitionDrawable = (TransitionDrawable) mPopUpButton.getDrawable();
-//                        transitionDrawable.setCrossFadeEnabled(true);
-//                        transitionDrawable.startTransition(POP_UP_TRANSITION_DURATION);
-//
-//                        new Handler().postDelayed(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                transitionDrawable.reverseTransition(POP_UP_TRANSITION_DURATION);
-//
-//                            }
-//                        }, 350 + timeToResetButtonDrawable);
                     } else {
                         Log.d("LOGGY", "We have no url");
                     }
