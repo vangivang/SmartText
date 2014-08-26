@@ -32,6 +32,7 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -433,6 +434,7 @@ public class PersonMessagesActivity extends Activity {
                             @Override
                             public void onClick(View v) {
                                 //TODO: open pop up view animatedly
+                                closeKeyboard(mPopUpButton);
                                 Toast.makeText(PersonMessagesActivity.this, "Clicked", Toast.LENGTH_SHORT).show();
                             }
                         });
@@ -473,6 +475,12 @@ public class PersonMessagesActivity extends Activity {
 
             }
         });
+    }
+
+    private void closeKeyboard(View closingView) {
+        InputMethodManager imm = (InputMethodManager)getSystemService(
+                Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(closingView.getWindowToken(), 0);
     }
 
     private void addToSentContenProvider(String phoneNumber, String message) {
