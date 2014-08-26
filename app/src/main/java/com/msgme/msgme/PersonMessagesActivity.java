@@ -43,6 +43,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.msgme.msgme.adapters.MessagesAdapter;
+import com.msgme.msgme.customViews.CustomPopupButton;
 import com.msgme.msgme.database.AppContentProvider;
 import com.msgme.msgme.vo.ContactMessages;
 import com.msgme.msgme.vo.ContactsMap;
@@ -56,6 +57,9 @@ public class PersonMessagesActivity extends Activity {
 
     public static final int PICK_CONTACT = 0;
     public static final int GET_ICON_FROM_LIST = 1;
+
+    // TODO: Perhaps get this from server aswell?
+    public static final int POP_UP_TRANSITION_DURATION = 500;
 
     public ContactMessages contactMessages = null;
 
@@ -78,7 +82,7 @@ public class PersonMessagesActivity extends Activity {
     public Boolean isRefreshIsNeeded = false;
     private static int mutex = 0;
 
-    private ImageButton mPopUpButton;
+    private CustomPopupButton mPopUpButton;
 
     Handler regularHandler = new Handler(new Handler.Callback() {
 
@@ -89,21 +93,17 @@ public class PersonMessagesActivity extends Activity {
             Log.i("MESSAGES_AWAKE", "MESSAGES_AWAKE");
             if (isRefreshIsNeeded) {
                 //Refresh
-                try {
-                    if (lvMessagesList == null)
-                        lvMessagesList = (ListView) findViewById(R.id.messagesList);
+                if (lvMessagesList == null)
+                    lvMessagesList = (ListView) findViewById(R.id.messagesList);
 
-                    lvMessagesList.invalidateViews();
+                lvMessagesList.invalidateViews();
 
-                    new UpdateList().execute();
+                new UpdateList().execute();
 
-                    isRefreshIsNeeded = false;
+                isRefreshIsNeeded = false;
 
-                    Log.i("HANDLER_AWAKE", "REFRESHING!!!");
+                Log.i("HANDLER_AWAKE", "REFRESHING!!!");
 
-                } catch (Exception e) {
-                    //Do nothing?
-                }
             } else
                 Log.i("HANDLER_AWAKE", "NOT_REFRESHING!!!");
 
@@ -118,14 +118,10 @@ public class PersonMessagesActivity extends Activity {
 
         @Override
         protected String doInBackground(String... params) {
-            try {
-                if (mutex == 0)
-                    getMessagesByThreadId();
-                ++mutex;
+            if (mutex == 0)
+                getMessagesByThreadId();
+            ++mutex;
 
-            } catch (Exception e) {
-                //do nothing
-            }
             return null;
         }
 
@@ -177,68 +173,64 @@ public class PersonMessagesActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_person_messages);
 
-        try {
-            onBackClick();
+        onBackClick();
 
-            onDeleteConversationClick();
+        onDeleteConversationClick();
 
-            setUpSmsSendButtonClickListener();
+        setUpSmsSendButtonClickListener();
 
-            onIconsClick();
+        onIconsClick();
 
-            fillContactsAutoComplete();
+        fillContactsAutoComplete();
 
-            mPopUpButton = (ImageButton) findViewById(R.id.popupButton);
+        mPopUpButton = (CustomPopupButton) findViewById(R.id.customPopupButton);
 
-            EditText etMessageBody = (EditText) findViewById(R.id.etMessageBody);
-            txtPhoneNo = (MultiAutoCompleteTextView) findViewById(R.id.txtPhoneNumber);
+        EditText etMessageBody = (EditText) findViewById(R.id.etMessageBody);
+        txtPhoneNo = (MultiAutoCompleteTextView) findViewById(R.id.txtPhoneNumber);
 
-            registerForContextMenu(etMessageBody);
+        registerForContextMenu(etMessageBody);
 
-            tiMessageBody = new TextImage(etMessageBody, context);
+        tiMessageBody = new TextImage(etMessageBody, context);
 
-            Intent intent = getIntent();
-            if (!intent.getBooleanExtra("isNewMessage", false)) {
-                txtPhoneNo.setVisibility(View.GONE);
+        Intent intent = getIntent();
+        if (!intent.getBooleanExtra("isNewMessage", false)) {
+            txtPhoneNo.setVisibility(View.GONE);
 
-                showMessagesState();
+            showMessagesState();
 
-                //set sms as read
-                ContentValues values = new ContentValues();
-                values.put("read", true);
-                context.getContentResolver().update(Uri.parse("content://sms/inbox"), values,
-                        "thread_id=" + contactMessages.getThread_id(), null);
+            //set sms as read
+            ContentValues values = new ContentValues();
+            values.put("read", true);
+            context.getContentResolver().update(Uri.parse("content://sms/inbox"), values,
+                    "thread_id=" + contactMessages.getThread_id(), null);
 
-            }
-            //New Message
-            else {
-                //remove delete conversation
-                findViewById(R.id.ivDeleteConversations).setVisibility(View.GONE);
-
-                txtPhoneNo.bringToFront();
-
-                TextView tvPersonalMessagesTitle = (TextView) findViewById(R.id.txtPersonalMessages);
-                tvPersonalMessagesTitle.setText("New Message");
-
-                //Is invite friend? from settings
-                boolean bIsInvite = false;
-                Serializable isInvite = intent.getSerializableExtra("isInviteFriend");
-                if (isInvite != null)
-                    bIsInvite = (Boolean) isInvite;
-                if (bIsInvite) {
-                    SpannedString msg = new SpannedString("Hey! I am using SmarText now and my SMS is smarter! Join " +
-                            "me: https://play.google.com/store/apps/details?id=com.msgme.msgme");
-                    tiMessageBody.setText(msg, msg.length());
-                }
-
-                txtPhoneNo.requestFocus();
-                txtPhoneNo.setFocusableInTouchMode(true);
-
-            }
-
-        } catch (Exception e) {
-            //Some error
         }
+        //New Message
+        else {
+            //remove delete conversation
+            findViewById(R.id.ivDeleteConversations).setVisibility(View.GONE);
+
+            txtPhoneNo.bringToFront();
+
+            TextView tvPersonalMessagesTitle = (TextView) findViewById(R.id.txtPersonalMessages);
+            tvPersonalMessagesTitle.setText("New Message");
+
+            //Is invite friend? from settings
+            boolean bIsInvite = false;
+            Serializable isInvite = intent.getSerializableExtra("isInviteFriend");
+            if (isInvite != null)
+                bIsInvite = (Boolean) isInvite;
+            if (bIsInvite) {
+                SpannedString msg = new SpannedString("Hey! I am using SmarText now and my SMS is smarter! Join " +
+                        "me: https://play.google.com/store/apps/details?id=com.msgme.msgme");
+                tiMessageBody.setText(msg, msg.length());
+            }
+
+            txtPhoneNo.requestFocus();
+            txtPhoneNo.setFocusableInTouchMode(true);
+
+        }
+
     }
 
 
@@ -346,39 +338,29 @@ public class PersonMessagesActivity extends Activity {
     private void showMessagesState() {
         //Get the ContactMessages That was clicked
 
-        try {
-            contactMessages = (ContactMessages) getIntent().getSerializableExtra("contactMessages");
-            if (contactMessages.getThread_id() == null) {
-                String from = (String) getIntent().getSerializableExtra("phone");
-                Cursor cursor1 = getContentResolver().query(Uri.parse("content://sms/inbox"),
-                        new String[]{"thread_id"}, "_id=?", new String[]{from}, null);
-                cursor1.moveToFirst();
-                contactMessages.setThread_id(cursor1.getString(cursor1.getColumnIndex("thread_id")));
-            }
-
-            TextView tvPersonalMessagesTitle = (TextView) findViewById(R.id.txtPersonalMessages);
-            tvPersonalMessagesTitle.setText(contactMessages.getName() == null ? contactMessages.getPhone() :
-                    contactMessages.getName());
-
-            getMessagesByThreadId();
-
-            showMessages();
-        } catch (Exception e) {
-            //Some error
+        contactMessages = (ContactMessages) getIntent().getSerializableExtra("contactMessages");
+        if (contactMessages.getThread_id() == null) {
+            String from = (String) getIntent().getSerializableExtra("phone");
+            Cursor cursor1 = getContentResolver().query(Uri.parse("content://sms/inbox"),
+                    new String[]{"thread_id"}, "_id=?", new String[]{from}, null);
+            cursor1.moveToFirst();
+            contactMessages.setThread_id(cursor1.getString(cursor1.getColumnIndex("thread_id")));
         }
 
+        TextView tvPersonalMessagesTitle = (TextView) findViewById(R.id.txtPersonalMessages);
+        tvPersonalMessagesTitle.setText(contactMessages.getName() == null ? contactMessages.getPhone() :
+                contactMessages.getName());
+
+        getMessagesByThreadId();
+
+        showMessages();
     }
 
     private void showMessages() {
-        try {
-            lvMessagesList = (ListView) findViewById(R.id.messagesList);
-            lvMessagesList.setStackFromBottom(true);
-            adapter = new MessagesAdapter(this, contactMessages.getMessages());
-            lvMessagesList.setAdapter(adapter);
-        } catch (Exception e) {
-            //Some error
-        }
-
+        lvMessagesList = (ListView) findViewById(R.id.messagesList);
+        lvMessagesList.setStackFromBottom(true);
+        adapter = new MessagesAdapter(this, contactMessages.getMessages());
+        lvMessagesList.setAdapter(adapter);
     }
 
     private void getMessagesByThreadId() {
@@ -444,22 +426,22 @@ public class PersonMessagesActivity extends Activity {
                     // If we have a url, we can execute a pop up animation
                     if (triggerWordUrl != null) {
 
-                        // TODO: enter pop up button transition animation
-
                         // TODO: get this value from preferences or main application
-                        int timeToResetButtonDrawable = 0;
+                        int timeToResetButtonDrawable = 5000;
 
-                        final TransitionDrawable transitionDrawable = (TransitionDrawable) mPopUpButton.getDrawable();
-                        transitionDrawable.setCrossFadeEnabled(true);
-                        transitionDrawable.startTransition(300);
+                        mPopUpButton.onTriggerWordFound(timeToResetButtonDrawable, POP_UP_TRANSITION_DURATION);
 
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                transitionDrawable.reverseTransition(300);
-
-                            }
-                        }, 350 + timeToResetButtonDrawable);
+//                        final TransitionDrawable transitionDrawable = (TransitionDrawable) mPopUpButton.getDrawable();
+//                        transitionDrawable.setCrossFadeEnabled(true);
+//                        transitionDrawable.startTransition(POP_UP_TRANSITION_DURATION);
+//
+//                        new Handler().postDelayed(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                transitionDrawable.reverseTransition(POP_UP_TRANSITION_DURATION);
+//
+//                            }
+//                        }, 350 + timeToResetButtonDrawable);
                     } else {
                         Log.d("LOGGY", "We have no url");
                     }
@@ -508,34 +490,26 @@ public class PersonMessagesActivity extends Activity {
 
 
     private void onIconsClick() {
-        try {
-            ImageView btnIcons = (ImageView) findViewById(R.id.btnIcons);
-            btnIcons.setOnClickListener(new View.OnClickListener() {
+        ImageView btnIcons = (ImageView) findViewById(R.id.btnIcons);
+        btnIcons.setOnClickListener(new View.OnClickListener() {
 
-                @Override
-                public void onClick(View v) {
-                    Intent in = new Intent(PersonMessagesActivity.this, CustomIconList.class);
-                    startActivityForResult(in, GET_ICON_FROM_LIST);
-                }
-            });
-        } catch (Exception e) {
-
-        }
+            @Override
+            public void onClick(View v) {
+                Intent in = new Intent(PersonMessagesActivity.this, CustomIconList.class);
+                startActivityForResult(in, GET_ICON_FROM_LIST);
+            }
+        });
     }
 
     private void onDeleteConversationClick() {
-        try {
-            ImageView ivDeleteConversations = (ImageView) findViewById(R.id.ivDeleteConversations);
-            ivDeleteConversations.setOnClickListener(new View.OnClickListener() {
+        ImageView ivDeleteConversations = (ImageView) findViewById(R.id.ivDeleteConversations);
+        ivDeleteConversations.setOnClickListener(new View.OnClickListener() {
 
-                @Override
-                public void onClick(View v) {
-                    showVerifyDeleteConversation();
-                }
-            });
-        } catch (Exception e) {
-            //Some error
-        }
+            @Override
+            public void onClick(View v) {
+                showVerifyDeleteConversation();
+            }
+        });
     }
 
     private void showVerifyDeleteConversation() {
@@ -567,13 +541,9 @@ public class PersonMessagesActivity extends Activity {
     }
 
     private void deleteConversationByThreadId() {
-        try {
-            getContentResolver().delete(Uri.parse("content://sms/conversations/" + contactMessages.getThread_id()),
-                    null, null);
-            Toast.makeText(getBaseContext(), "Conversation deleted...", Toast.LENGTH_SHORT).show();
-        } catch (Exception ex) {
-        }
-
+        getContentResolver().delete(Uri.parse("content://sms/conversations/" + contactMessages.getThread_id()),
+                null, null);
+        Toast.makeText(getBaseContext(), "Conversation deleted...", Toast.LENGTH_SHORT).show();
     }
 
     private void showAlertCantSendMessage() {
@@ -595,35 +565,31 @@ public class PersonMessagesActivity extends Activity {
 
 
     private List<String> extractNumbers(String input) throws InvalidParameterException {
-        try {
-            List<String> numbers = new ArrayList<String>();
+        List<String> numbers = new ArrayList<String>();
 
-            String[] contacts = input.split(ContactsMap.SEPERATOR);
+        String[] contacts = input.split(ContactsMap.SEPERATOR);
 
-            for (int i = 0; i < contacts.length; i++) {
-                int startIndex = contacts[i].lastIndexOf("<");
+        for (int i = 0; i < contacts.length; i++) {
+            int startIndex = contacts[i].lastIndexOf("<");
 
-                if (startIndex == -1 && contacts[i].trim().length() > 0) {
-                    if (contacts[i].replace("-", "").replace("+", "").matches("[0-9]+"))
-                        numbers.add(contacts[i].trim().replace("-", ""));
-                    else
-                        throw new InvalidParameterException();
-                } else {
-                    int endIndex = contacts[i].lastIndexOf(">");
+            if (startIndex == -1 && contacts[i].trim().length() > 0) {
+                if (contacts[i].replace("-", "").replace("+", "").matches("[0-9]+"))
+                    numbers.add(contacts[i].trim().replace("-", ""));
+                else
+                    throw new InvalidParameterException();
+            } else {
+                int endIndex = contacts[i].lastIndexOf(">");
 
-                    if (endIndex == -1 && contacts[i].trim().length() == 0)
-                        throw new InvalidParameterException();
+                if (endIndex == -1 && contacts[i].trim().length() == 0)
+                    throw new InvalidParameterException();
 
-                    else
-                        numbers.add(contacts[i].substring(startIndex + 1, endIndex).trim().replace("-", ""));
-                }
+                else
+                    numbers.add(contacts[i].substring(startIndex + 1, endIndex).trim().replace("-", ""));
             }
-
-            return numbers;
-
-        } catch (InvalidParameterException e) {
-            throw new InvalidParameterException();
         }
+
+        return numbers;
+
     }
 
 
@@ -675,13 +641,9 @@ public class PersonMessagesActivity extends Activity {
 
     //Open Contacts
     public void readcontacts() {
-        try {
-            Intent intent = new Intent(Intent.ACTION_PICK);
-            intent.setType(ContactsContract.Contacts.CONTENT_TYPE);
-            startActivityForResult(intent, PICK_CONTACT);
-        } catch (Exception e) {
-            //Some error
-        }
+        Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.setType(ContactsContract.Contacts.CONTENT_TYPE);
+        startActivityForResult(intent, PICK_CONTACT);
     }
 
     /*
@@ -701,31 +663,27 @@ public class PersonMessagesActivity extends Activity {
                     int phoneIdx = 0;
                     String phoneNumber = "";
 
-                    try {
-                        Uri result = data.getData();
-                        String id = result.getLastPathSegment();
+                    Uri result = data.getData();
+                    String id = result.getLastPathSegment();
 
-                        cursor = getContentResolver().query(Phone.CONTENT_URI, null, Phone.CONTACT_ID + "=?",
-                                new String[]{id}, null);
-                        phoneIdx = cursor.getColumnIndex(Phone.DATA);
+                    cursor = getContentResolver().query(Phone.CONTENT_URI, null, Phone.CONTACT_ID + "=?",
+                            new String[]{id}, null);
+                    phoneIdx = cursor.getColumnIndex(Phone.DATA);
 
-                        if (cursor.moveToFirst()) {
-                            while (cursor.isAfterLast() == false) {
-                                phoneNumber = cursor.getString(phoneIdx);
-                                allNumbers.add(phoneNumber);
-                                cursor.moveToNext();
-                            }
-
-                            txtPhoneNo.setText(phoneNumber);
-                        } else {
-                            txtPhoneNo.setText("No results!");
+                    if (cursor.moveToFirst()) {
+                        while (cursor.isAfterLast() == false) {
+                            phoneNumber = cursor.getString(phoneIdx);
+                            allNumbers.add(phoneNumber);
+                            cursor.moveToNext();
                         }
-                    } catch (Exception e) {
-                        //error actions
-                    } finally {
-                        if (cursor != null) {
-                            cursor.close();
-                        }
+
+                        txtPhoneNo.setText(phoneNumber);
+                    } else {
+                        txtPhoneNo.setText("No results!");
+                    }
+
+                    if (cursor != null) {
+                        cursor.close();
                     }
                 }
                 break;
@@ -747,26 +705,20 @@ public class PersonMessagesActivity extends Activity {
 
     //sends an SMS message to another device
     private void sendSMS(final String phoneNumber, final String message) {
-        try {
 
-            String SENT = "SMS_SENT";
-            String DELIVERED = "SMS_DELIVERED";
+        String SENT = "SMS_SENT";
+        String DELIVERED = "SMS_DELIVERED";
 
-            PendingIntent sentPI = PendingIntent.getBroadcast(this, 0,
-                    new Intent(SENT), 0);
+        PendingIntent sentPI = PendingIntent.getBroadcast(this, 0,
+                new Intent(SENT), 0);
 
-            PendingIntent deliveredPI = PendingIntent.getBroadcast(this, 0,
-                    new Intent(DELIVERED), 0);
+        PendingIntent deliveredPI = PendingIntent.getBroadcast(this, 0,
+                new Intent(DELIVERED), 0);
 
-            SmsManager sms = SmsManager.getDefault();
-            sms.sendTextMessage(phoneNumber, null, message, sentPI, deliveredPI);
+        SmsManager sms = SmsManager.getDefault();
+        sms.sendTextMessage(phoneNumber, null, message, sentPI, deliveredPI);
 
-            addToSentContenProvider(phoneNumber, message);
-
-
-        } catch (Exception e) {
-            //Some error
-        }
+        addToSentContenProvider(phoneNumber, message);
     }
 
 

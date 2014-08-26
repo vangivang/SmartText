@@ -18,22 +18,22 @@
 
     </language>
 
-    <language name="french">
-        <entry>
-            <text>Pouize</text>
-            <url>http://elevate.co.il/yaron/mockup/pics/pizza.png</url>
-        </entry>
+    <!--<language name="french">-->
+        <!--<entry>-->
+            <!--<text>Pouize</text>-->
+            <!--<url>http://elevate.co.il/yaron/mockup/pics/pizza.png</url>-->
+        <!--</entry>-->
 
-        <entry>
-            <text>Habourgerough</text>
-            <url>http://elevate.co.il/yaron/mockup/pics/hamburger.png</url>
-        </entry>
+        <!--<entry>-->
+            <!--<text>Habourgerough</text>-->
+            <!--<url>http://elevate.co.il/yaron/mockup/pics/hamburger.png</url>-->
+        <!--</entry>-->
 
-        <entry>
-            <text>Sushiwe</text>
-            <url>http://elevate.co.il/yaron/mockup/pics/sushi.png</url>
-        </entry>
+        <!--<entry>-->
+            <!--<text>Sushiwe</text>-->
+            <!--<url>http://elevate.co.il/yaron/mockup/pics/sushi.png</url>-->
+        <!--</entry>-->
 
-    </language>
+    <!--</language>-->
 
 </trigger_words>
