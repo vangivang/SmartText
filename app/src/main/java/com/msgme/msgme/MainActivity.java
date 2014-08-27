@@ -535,22 +535,19 @@ public class MainActivity extends Activity {
     private class ASyncDownloader extends AsyncTask<String, String, Void> {
 
         private String[] mUrls;
-        private boolean mIsTableDataDeleted = false;
 
         private ASyncDownloader(String[] urls) {
-            mUrls = urls;
+
+            // Delete database content if exists
             if (doesDatabaseExist(MainActivity.this, AppContentProvider.DATABASE_NAME)){
                 deleteTablesData();
             }
+
+            mUrls = urls;
         }
 
         @Override
         protected Void doInBackground(String... params) {
-
-//            if (mIsTableDataDeleted){
-//                deleteTablesData();
-//                mIsTableDataDeleted = false;
-//            }
 
             XmlPullParser receivedData;
             int urlCounter = 0;
@@ -657,6 +654,7 @@ public class MainActivity extends Activity {
 
         private void deleteTablesData(){
 
+            // TODO: delete all language tables.
             getContentResolver().delete(AppContentProvider.CONTENT_URI_ENGLISH, null, null);
         }
 
