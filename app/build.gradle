@@ -28,4 +28,7 @@ android {
 dependencies {
     compile 'com.android.support:support-v4:20.0.0'
     compile 'com.nineoldandroids:library:2.4.0'
+
+    //https://github.com/jgilfelt/android-sqlite-asset-helper
+    compile 'com.readystatesoftware.sqliteasset:sqliteassethelper:+'
 }

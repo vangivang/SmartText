@@ -1,0 +1,864 @@
+<trigger_words>
+    <language name="english">
+
+        <coupon>
+            <text>would you like a coupon for x nearby ?</text>
+        </coupon>
+
+        <entry>
+            <text>pizza</text>
+            <url>http://smartxt.me/images/pizza.png</url>
+        </entry>
+
+        <entry>
+            <text>pasta</text>
+            <url>http://smartxt.me/images/pasta.png</url>
+        </entry>
+
+        <entry>
+            <text>sushi</text>
+            <url>http://smartxt.me/images/sushi.png</url>
+        </entry>
+
+        <entry>
+            <text>hamburger</text>
+            <url>http://smartxt.me/images/hamburger.png</url>
+        </entry>
+
+        <entry>
+            <text>spaghetti</text>
+            <url>http://smartxt.me/images/spaghetti.png</url>
+        </entry>
+
+        <entry>
+            <text>salad</text>
+            <url>http://smartxt.me/images/salad.png</url>
+        </entry>
+
+        <entry>
+            <text>seafood</text>
+            <url>http://smartxt.me/images/seafood.png</url>
+        </entry>
+
+        <entry>
+            <text>cake</text>
+            <url>http://smartxt.me/images/cake.png</url>
+        </entry>
+
+        <entry>
+            <text>pie</text>
+            <url>http://smartxt.me/images/pie.png</url>
+        </entry>
+
+        <entry>
+            <text>muesli</text>
+            <url>http://smartxt.me/images/muesli.png</url>
+        </entry>
+
+        <entry>
+            <text>ravioli</text>
+            <url>http://smartxt.me/images/ravioli.png</url>
+        </entry>
+
+        <entry>
+            <text>pancakes</text>
+            <url>http://smartxt.me/images/pancakes.png</url>
+        </entry>
+
+        <entry>
+            <text>bacon</text>
+            <url>http://smartxt.me/images/bacon.png</url>
+        </entry>
+
+        <entry>
+            <text>sausage</text>
+            <url>http://smartxt.me/images/sausage.png</url>
+        </entry>
+
+        <entry>
+            <text>shrimp</text>
+            <url>http://smartxt.me/images/shrimp.png</url>
+        </entry>
+
+        <entry>
+            <text>prawns</text>
+            <url>http://smartxt.me/images/prawns.png</url>
+        </entry>
+
+        <entry>
+            <text>bakery </text>
+            <url>http://smartxt.me/images/bakery.png</url>
+        </entry>
+
+        <entry>
+            <text>macaroni</text>
+            <url>http://smartxt.me/images/macaroni.png</url>
+        </entry>
+
+        <entry>
+            <text>milkshake</text>
+            <url>http://smartxt.me/images/milkshake.png</url>
+        </entry>
+
+        <entry>
+            <text>coffee</text>
+            <url>http://smartxt.me/images/coffee.png</url>
+        </entry>
+
+        <entry>
+            <text>wine</text>
+            <url>http://smartxt.me/images/wine.png</url>
+        </entry>
+
+        <entry>
+            <text>whiskey</text>
+            <url>http://smartxt.me/images/Whiskey.png</url>
+        </entry>
+
+        <entry>
+            <text>vodka</text>
+            <url>http://smartxt.me/images/Vodka.png</url>
+        </entry>
+
+        <entry>
+            <text>tequila</text>
+            <url>http://smartxt.me/images/Tequila.png</url>
+        </entry>
+
+        <entry>
+            <text>rum</text>
+            <url>http://smartxt.me/images/Rum.png</url>
+        </entry>
+
+        <entry>
+            <text>gin</text>
+            <url>http://smartxt.me/images/Gin.png</url>
+        </entry>
+
+        <entry>
+            <text>brandy</text>
+            <url>http://smartxt.me/images/Brandy.png</url>
+        </entry>
+
+        <entry>
+            <text>arrack</text>
+            <url>http://smartxt.me/images/Arrack.png</url>
+        </entry>
+
+        <entry>
+            <text>beer</text>
+            <url>http://smartxt.me/images/Beer.png</url>
+        </entry>
+
+        <entry>
+            <text>dinner</text>
+            <url>http://smartxt.me/images/Dinner.png</url>
+        </entry>
+
+        <entry>
+            <text>launch</text>
+            <url>http://smartxt.me/images/launch.png</url>
+        </entry>
+
+        <entry>
+            <text>breakfast</text>
+            <url>http://smartxt.me/images/breakfast.png</url>
+        </entry>
+
+        <entry>
+            <text>brunch</text>
+            <url>http://smartxt.me/images/Brunch.png</url>
+        </entry>
+    </language>
+
+    <language name="portuguese">
+
+        <coupon>
+            <text>cupom para x nas proximidades?</text>
+        </coupon>
+
+        <entry>
+            <text>pizza</text>
+            <url>http://smartxt.me/images/pizza.png</url>
+        </entry>
+
+        <entry>
+            <text>massas</text>
+            <url>http://smartxt.me/images/pasta.png</url>
+        </entry>
+
+        <entry>
+            <text>sushi</text>
+            <url>http://smartxt.me/images/sushi.png</url>
+        </entry>
+
+        <entry>
+            <text>hamburger</text>
+            <url>http://smartxt.me/images/hamburger.png</url>
+        </entry>
+
+        <entry>
+            <text>spaghetti</text>
+            <url>http://smartxt.me/images/spaghetti.png</url>
+        </entry>
+
+        <entry>
+            <text>Salada</text>
+            <url>http://smartxt.me/images/salad.png</url>
+        </entry>
+
+        <entry>
+            <text>seafood</text>
+            <url>http://smartxt.me/images/seafood.png</url>
+        </entry>
+
+        <entry>
+            <text>bolo</text>
+            <url>http://smartxt.me/images/cake.png</url>
+        </entry>
+
+        <entry>
+            <text>torta</text>
+            <url>http://smartxt.me/images/pie.png</url>
+        </entry>
+
+        <entry>
+            <text>muesli</text>
+            <url>http://smartxt.me/images/muesli.png</url>
+        </entry>
+
+        <entry>
+            <text>ravioli</text>
+            <url>http://smartxt.me/images/ravioli.png</url>
+        </entry>
+
+        <entry>
+            <text>panquecas</text>
+            <url>http://smartxt.me/images/pancakes.png</url>
+        </entry>
+
+        <entry>
+            <text>bacon</text>
+            <url>http://smartxt.me/images/bacon.png</url>
+        </entry>
+
+        <entry>
+            <text>linguiça</text>
+            <url>http://smartxt.me/images/sausage.png</url>
+        </entry>
+
+        <entry>
+            <text>camarão</text>
+            <url>http://smartxt.me/images/shrimp.png</url>
+        </entry>
+
+        <entry>
+            <text>camarões</text>
+            <url>http://smartxt.me/images/prawns.png</url>
+        </entry>
+
+        <entry>
+            <text>padaria</text>
+            <url>http://smartxt.me/images/bakery.png</url>
+        </entry>
+
+        <entry>
+            <text>macarrão</text>
+            <url>http://smartxt.me/images/macaroni.png</url>
+        </entry>
+
+        <entry>
+            <text>milkshake</text>
+            <url>http://smartxt.me/images/milkshake.png</url>
+        </entry>
+
+        <entry>
+            <text>café</text>
+            <url>http://smartxt.me/images/coffee.png</url>
+        </entry>
+
+        <entry>
+            <text>vinho</text>
+            <url>http://smartxt.me/images/wine.png</url>
+        </entry>
+
+        <entry>
+            <text>whiskey</text>
+            <url>http://smartxt.me/images/Whiskey.png</url>
+        </entry>
+
+        <entry>
+            <text>vodka</text>
+            <url>http://smartxt.me/images/Vodka.png</url>
+        </entry>
+
+        <entry>
+            <text>tequila</text>
+            <url>http://smartxt.me/images/Tequila.png</url>
+        </entry>
+
+        <entry>
+            <text>rum</text>
+            <url>http://smartxt.me/images/Rum.png</url>
+        </entry>
+
+        <entry>
+            <text>gin</text>
+            <url>http://smartxt.me/images/Gin.png</url>
+        </entry>
+
+        <entry>
+            <text>conhaque</text>
+            <url>http://smartxt.me/images/Brandy.png</url>
+        </entry>
+
+        <entry>
+            <text>araca</text>
+            <url>http://smartxt.me/images/Arrack.png</url>
+        </entry>
+
+        <entry>
+            <text>cerveja</text>
+            <url>http://smartxt.me/images/Beer.png</url>
+        </entry>
+
+        <entry>
+            <text>jantar</text>
+            <url>http://smartxt.me/images/Dinner.png</url>
+        </entry>
+
+        <entry>
+            <text>lançamento</text>
+            <url>http://smartxt.me/images/launch.png</url>
+        </entry>
+
+        <entry>
+            <text>breakfast</text>
+            <url>http://smartxt.me/images/breakfast.png</url>
+        </entry>
+
+        <entry>
+            <text>brunch</text>
+            <url>http://smartxt.me/images/Brunch.png</url>
+        </entry>
+
+    </language>
+
+    <language name="spanish">
+
+        <coupon>
+            <text>quieres un cupón para x cerca?</text>
+        </coupon>
+
+        <entry>
+            <text>pizza</text>
+            <url>http://smartxt.me/images/pizza.png</url>
+        </entry>
+
+        <entry>
+            <text>massas</text>
+            <url>http://smartxt.me/images/pasta.png</url>
+        </entry>
+
+        <entry>
+            <text>sushi</text>
+            <url>http://smartxt.me/images/sushi.png</url>
+        </entry>
+
+        <entry>
+            <text>hamburger</text>
+            <url>http://smartxt.me/images/hamburger.png</url>
+        </entry>
+
+        <entry>
+            <text>spaghetti</text>
+            <url>http://smartxt.me/images/spaghetti.png</url>
+        </entry>
+
+        <entry>
+            <text>Salada</text>
+            <url>http://smartxt.me/images/salad.png</url>
+        </entry>
+
+        <entry>
+            <text>seafood</text>
+            <url>http://smartxt.me/images/seafood.png</url>
+        </entry>
+
+        <entry>
+            <text>bolo</text>
+            <url>http://smartxt.me/images/cake.png</url>
+        </entry>
+
+        <entry>
+            <text>torta</text>
+            <url>http://smartxt.me/images/pie.png</url>
+        </entry>
+
+        <entry>
+            <text>muesli</text>
+            <url>http://smartxt.me/images/muesli.png</url>
+        </entry>
+
+        <entry>
+            <text>ravioli</text>
+            <url>http://smartxt.me/images/ravioli.png</url>
+        </entry>
+
+        <entry>
+            <text>panquecas</text>
+            <url>http://smartxt.me/images/pancakes.png</url>
+        </entry>
+
+        <entry>
+            <text>bacon</text>
+            <url>http://smartxt.me/images/bacon.png</url>
+        </entry>
+
+        <entry>
+            <text>linguiça</text>
+            <url>http://smartxt.me/images/sausage.png</url>
+        </entry>
+
+        <entry>
+            <text>camarão</text>
+            <url>http://smartxt.me/images/shrimp.png</url>
+        </entry>
+
+        <entry>
+            <text>camarões</text>
+            <url>http://smartxt.me/images/prawns.png</url>
+        </entry>
+
+        <entry>
+            <text>padaria</text>
+            <url>http://smartxt.me/images/bakery.png</url>
+        </entry>
+
+        <entry>
+            <text>macarrão</text>
+            <url>http://smartxt.me/images/macaroni.png</url>
+        </entry>
+
+        <entry>
+            <text>milkshake</text>
+            <url>http://smartxt.me/images/milkshake.png</url>
+        </entry>
+
+        <entry>
+            <text>café</text>
+            <url>http://smartxt.me/images/coffee.png</url>
+        </entry>
+
+        <entry>
+            <text>vinho</text>
+            <url>http://smartxt.me/images/wine.png</url>
+        </entry>
+
+        <entry>
+            <text>whiskey</text>
+            <url>http://smartxt.me/images/Whiskey.png</url>
+        </entry>
+
+        <entry>
+            <text>vodka</text>
+            <url>http://smartxt.me/images/Vodka.png</url>
+        </entry>
+
+        <entry>
+            <text>tequila</text>
+            <url>http://smartxt.me/images/Tequila.png</url>
+        </entry>
+
+        <entry>
+            <text>rum</text>
+            <url>http://smartxt.me/images/Rum.png</url>
+        </entry>
+
+        <entry>
+            <text>gin</text>
+            <url>http://smartxt.me/images/Gin.png</url>
+        </entry>
+
+        <entry>
+            <text>conhaque</text>
+            <url>http://smartxt.me/images/Brandy.png</url>
+        </entry>
+
+        <entry>
+            <text>araca</text>
+            <url>http://smartxt.me/images/Arrack.png</url>
+        </entry>
+
+        <entry>
+            <text>cerveja</text>
+            <url>http://smartxt.me/images/Beer.png</url>
+        </entry>
+
+        <entry>
+            <text>jantar</text>
+            <url>http://smartxt.me/images/Dinner.png</url>
+        </entry>
+
+        <entry>
+            <text>lançamento</text>
+            <url>http://smartxt.me/images/launch.png</url>
+        </entry>
+
+        <entry>
+            <text>breakfast</text>
+            <url>http://smartxt.me/images/breakfast.png</url>
+        </entry>
+
+        <entry>
+            <text>brunch</text>
+            <url>http://smartxt.me/images/Brunch.png</url>
+        </entry>
+
+    </language>
+
+    <language name="arabic">
+
+        <coupon>
+            <text>تريد قسيمة x يوجد بالقرب منها؟?</text>
+        </coupon>
+
+        <entry>
+            <text>البيتزا</text>
+            <url>http://smartxt.me/images/pizza.png</url>
+        </entry>
+
+        <entry>
+            <text>المعكرونة</text>
+            <url>http://smartxt.me/images/pasta.png</url>
+        </entry>
+
+        <entry>
+            <text>السوشي</text>
+            <url>http://smartxt.me/images/sushi.png</url>
+        </entry>
+
+        <entry>
+            <text>هامبرغر</text>
+            <url>http://smartxt.me/images/hamburger.png</url>
+        </entry>
+
+        <entry>
+            <text>السباغيتي</text>
+            <url>http://smartxt.me/images/pizza.png</url>
+        </entry>
+
+        <entry>
+            <text>سلطة</text>
+            <url>http://smartxt.me/images/salad.png</url>
+        </entry>
+
+        <entry>
+            <text>المأكولاتالبحرية</text>
+            <url>http://smartxt.me/images/seafood.png</url>
+        </entry>
+
+        <entry>
+            <text>كعكة</text>
+            <url>http://smartxt.me/images/cake.png</url>
+        </entry>
+
+        <entry>
+            <text>فطيرة</text>
+            <url>http://smartxt.me/images/pie.png</url>
+        </entry>
+
+        <entry>
+            <text>هذاالمزيج</text>
+            <url>http://smartxt.me/images/muesli.png</url>
+        </entry>
+
+        <entry>
+            <text>الرافيولي</text>
+            <url>http://smartxt.me/images/ravioli.png</url>
+        </entry>
+
+        <entry>
+            <text>الفطائر</text>
+            <url>http://smartxt.me/images/pancakes.png</url>
+        </entry>
+
+        <entry>
+            <text>لحمالخنزيرالمقدد</text>
+            <url>http://smartxt.me/images/bacon.png</url>
+        </entry>
+
+        <entry>
+            <text>السجق</text>
+            <url>http://smartxt.me/images/sausage.png</url>
+        </entry>
+
+        <entry>
+            <text>الروبيان</text>
+            <url>http://smartxt.me/images/shrimp.png</url>
+        </entry>
+
+        <entry>
+            <text>الجمبري</text>
+            <url>http://smartxt.me/images/prawns.png</url>
+        </entry>
+
+        <entry>
+            <text>مخبز</text>
+            <url>http://smartxt.me/images/bakery.png</url>
+        </entry>
+
+        <entry>
+            <text>المعكرونة</text>
+            <url>http://smartxt.me/images/macaroni.png</url>
+        </entry>
+
+        <entry>
+            <text>اللبن</text>
+            <url>http://smartxt.me/images/milkshake.png</url>
+        </entry>
+
+        <entry>
+            <text>القهوة</text>
+            <url>http://smartxt.me/images/coffee.png</url>
+        </entry>
+
+        <entry>
+            <text>النبيذ</text>
+            <url>http://smartxt.me/images/wine.png</url>
+        </entry>
+
+        <entry>
+            <text>ويسكي</text>
+            <url>http://smartxt.me/images/Whiskey.png</url>
+        </entry>
+
+        <entry>
+            <text>الفودكا</text>
+            <url>http://smartxt.me/images/Vodka.png</url>
+        </entry>
+
+        <entry>
+            <text>تكيلا</text>
+            <url>http://smartxt.me/images/Tequila.png</url>
+        </entry>
+
+        <entry>
+            <text>رم</text>
+            <url>http://smartxt.me/images/Rum.png</url>
+        </entry>
+
+        <entry>
+            <text>الجن</text>
+            <url>http://smartxt.me/images/Gin.png</url>
+        </entry>
+
+        <entry>
+            <text>براندي</text>
+            <url>http://smartxt.me/images/Brandy.png</url>
+        </entry>
+
+        <entry>
+            <text>عرق</text>
+            <url>http://smartxt.me/images/Arrack.png</url>
+        </entry>
+
+        <entry>
+            <text>البيرة</text>
+            <url>http://smartxt.me/images/Beer.png</url>
+        </entry>
+
+        <entry>
+            <text>عشاء</text>
+            <url>http://smartxt.me/images/Dinner.png</url>
+        </entry>
+
+        <entry>
+            <text>إطلاق</text>
+            <url>http://smartxt.me/images/launch.png</url>
+        </entry>
+
+        <entry>
+            <text>الإفطار</text>
+            <url>http://smartxt.me/images/breakfast.png</url>
+        </entry>
+
+        <entry>
+            <text>الغداء</text>
+            <url>http://smartxt.me/images/Brunch.png</url>
+        </entry>
+
+    </language>
+
+    <language name="chinese">
+
+        <coupon>
+            <text>你想获得优惠券的 x 附近吗？</text>
+        </coupon>
+
+        <entry>
+            <text>比萨</text>
+            <url>http://smartxt.me/images/pizza.png</url>
+        </entry>
+
+        <entry>
+            <text>面食</text>
+            <url>http://smartxt.me/images/pasta.png</url>
+        </entry>
+
+        <entry>
+            <text>寿司</text>
+            <url>http://smartxt.me/images/sushi.png</url>
+        </entry>
+
+        <entry>
+            <text>汉堡</text>
+            <url>http://smartxt.me/images/hamburger.png</url>
+        </entry>
+
+        <entry>
+            <text>意大利面条</text>
+            <url>http://smartxt.me/images/pizza.png</url>
+        </entry>
+
+        <entry>
+            <text>沙拉</text>
+            <url>http://smartxt.me/images/salad.png</url>
+        </entry>
+
+        <entry>
+            <text>海鲜</text>
+            <url>http://smartxt.me/images/seafood.png</url>
+        </entry>
+
+        <entry>
+            <text>蛋糕</text>
+            <url>http://smartxt.me/images/cake.png</url>
+        </entry>
+
+        <entry>
+            <text>馅饼</text>
+            <url>http://smartxt.me/images/pie.png</url>
+        </entry>
+
+        <entry>
+            <text>麦片</text>
+            <url>http://smartxt.me/images/muesli.png</url>
+        </entry>
+
+        <entry>
+            <text>馄饨</text>
+            <url>http://smartxt.me/images/ravioli.png</url>
+        </entry>
+
+        <entry>
+            <text>煎饼</text>
+            <url>http://smartxt.me/images/pancakes.png</url>
+        </entry>
+
+        <entry>
+            <text>熏肉</text>
+            <url>http://smartxt.me/images/bacon.png</url>
+        </entry>
+
+        <entry>
+            <text>香肠</text>
+            <url>http://smartxt.me/images/sausage.png</url>
+        </entry>
+
+        <entry>
+            <text>虾</text>
+            <url>http://smartxt.me/images/shrimp.png</url>
+        </entry>
+
+        <entry>
+            <text>大虾</text>
+            <url>http://smartxt.me/images/prawns.png</url>
+        </entry>
+
+        <entry>
+            <text>面包店</text>
+            <url>http://smartxt.me/images/bakery.png</url>
+        </entry>
+
+        <entry>
+            <text>通心粉</text>
+            <url>http://smartxt.me/images/macaroni.png</url>
+        </entry>
+
+        <entry>
+            <text>奶昔</text>
+            <url>http://smartxt.me/images/milkshake.png</url>
+        </entry>
+
+        <entry>
+            <text>咖啡</text>
+            <url>http://smartxt.me/images/coffee.png</url>
+        </entry>
+
+        <entry>
+            <text>葡萄酒</text>
+            <url>http://smartxt.me/images/wine.png</url>
+        </entry>
+
+        <entry>
+            <text>威士忌</text>
+            <url>http://smartxt.me/images/Whiskey.png</url>
+        </entry>
+
+        <entry>
+            <text>伏特加酒</text>
+            <url>http://smartxt.me/images/Vodka.png</url>
+        </entry>
+
+        <entry>
+            <text>龙舌兰酒</text>
+            <url>http://smartxt.me/images/Tequila.png</url>
+        </entry>
+
+        <entry>
+            <text>朗姆酒</text>
+            <url>http://smartxt.me/images/Rum.png</url>
+        </entry>
+
+        <entry>
+            <text>杜松子酒</text>
+            <url>http://smartxt.me/images/Gin.png</url>
+        </entry>
+
+        <entry>
+            <text>白兰地</text>
+            <url>http://smartxt.me/images/Brandy.png</url>
+        </entry>
+
+        <entry>
+            <text>烧酒</text>
+            <url>http://smartxt.me/images/Arrack.png</url>
+        </entry>
+
+        <entry>
+            <text>啤酒</text>
+            <url>http://smartxt.me/images/Beer.png</url>
+        </entry>
+
+        <entry>
+            <text>晚餐</text>
+            <url>http://smartxt.me/images/Dinner.png</url>
+        </entry>
+
+        <entry>
+            <text>推出</text>
+            <url>http://smartxt.me/images/launch.png</url>
+        </entry>
+
+        <entry>
+            <text>早餐</text>
+            <url>http://smartxt.me/images/breakfast.png</url>
+        </entry>
+
+        <entry>
+            <text>早午餐</text>
+            <url>http://smartxt.me/images/Brunch.png</url>
+        </entry>
+    </language>
+</trigger_words>
