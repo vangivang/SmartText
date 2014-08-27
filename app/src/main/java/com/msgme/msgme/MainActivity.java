@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -38,6 +39,7 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -527,20 +529,28 @@ public class MainActivity extends Activity {
         c.close();
     }
 
-
     /**
      * Will download XML files from url and insert them into DB
      */
     private class ASyncDownloader extends AsyncTask<String, String, Void> {
 
         private String[] mUrls;
+        private boolean mIsTableDataDeleted = false;
 
         private ASyncDownloader(String[] urls) {
             mUrls = urls;
+            if (doesDatabaseExist(MainActivity.this, AppContentProvider.DATABASE_NAME)){
+                deleteTablesData();
+            }
         }
 
         @Override
         protected Void doInBackground(String... params) {
+
+//            if (mIsTableDataDeleted){
+//                deleteTablesData();
+//                mIsTableDataDeleted = false;
+//            }
 
             XmlPullParser receivedData;
             int urlCounter = 0;
@@ -640,8 +650,14 @@ public class MainActivity extends Activity {
 
         @Override
         protected void onProgressUpdate(String... values) {
+
             insertRowIntoDatabase(values);
             super.onProgressUpdate(values);
+        }
+
+        private void deleteTablesData(){
+
+            getContentResolver().delete(AppContentProvider.CONTENT_URI_ENGLISH, null, null);
         }
 
         private void insertRowIntoDatabase(String[] values) {
@@ -652,8 +668,13 @@ public class MainActivity extends Activity {
             contentValues.put(AppContentProvider.COLUMN_TRIGGER_WORD_IMAGE_URL, wordImageUrl);
 
             // call DB and insert row
-            Uri uri = getContentResolver().insert(AppContentProvider.CONTENT_URI, contentValues);
+            Uri uri = getContentResolver().insert(AppContentProvider.CONTENT_URI_ENGLISH, contentValues);
             Log.d(TAG, uri.toString() + " inserted!");
+        }
+
+        private boolean doesDatabaseExist(ContextWrapper context, String dbName) {
+            File dbFile = context.getDatabasePath(dbName);
+            return dbFile.exists();
         }
     }
 

@@ -13,6 +13,7 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
+
 import java.util.HashMap;
 
 /**
@@ -22,14 +23,17 @@ public class AppContentProvider extends ContentProvider {
 
     // database creation stuff
     private SQLiteDatabase database;
-    private static final String DATABASE_NAME = "trigger_words.db";
     private static final int DATABASE_VERSION = 1;
-    public static final String TABLE_TRIGGER_WORDS = "trigger_words_table";
+    public static final String DATABASE_NAME = "trigger_words.db";
+    public static final String TABLE_TRIGGER_WORDS_ENGLISH = "trigger_words_english";
+    public static final String TABLE_TRIGGER_WORDS_SPANISH = "trigger_words_spanish";
+
     public static final String COLUMN_ID = "_id";
     public static final String COLUMN_TRIGGER_WORD = "trigger_word";
     public static final String COLUMN_TRIGGER_WORD_IMAGE_URL = "trigger_word_image_url";
+
     private static final String CREATE_TABLE = "create table "
-            + TABLE_TRIGGER_WORDS
+            + TABLE_TRIGGER_WORDS_ENGLISH
             + "("
             + COLUMN_ID + " integer primary key autoincrement, "
             + COLUMN_TRIGGER_WORD + " text not null unique, "
@@ -39,21 +43,30 @@ public class AppContentProvider extends ContentProvider {
     // fields for my content provider
     private static final String PROVIDER_NAME = "com.msgme.msgme.database.AppContentProvider";
     private static final String URL = "content://" + PROVIDER_NAME + "/%s";
-    public static final Uri CONTENT_URI = formUri(TABLE_TRIGGER_WORDS);
-//    public static final Uri CONTENT_URI = Uri.parse(URL);
+
+    public static final Uri CONTENT_URI_ENGLISH = formUri(TABLE_TRIGGER_WORDS_ENGLISH);
+    public static final Uri CONTENT_URI_SPANISH = formUri(TABLE_TRIGGER_WORDS_SPANISH);
+//    public static final Uri CONTENT_URI_ENGLISH = Uri.parse(URL);
 
     // integer values used in content URI
     private static final int TRIGGER_WORDS = 1;
     private static final int TRIGGER_WORD_ID = 2;
+    private static final int MATCHER_TRIGGER_WORDS_TABLE_ENGLISH = 3;
+    private static final int MATCHER_TRIGGER_WORDS_TABLE_SPANISH = 4;
 
     // projection map for a query
     private static HashMap<String, String> WordsMap;
 
     // maps content URI "patterns" to the integer values that were set above
     static final UriMatcher uriMatcher;
-    static{
+
+    static {
         uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-        uriMatcher.addURI(PROVIDER_NAME, CONTENT_URI.getPath().substring(1), TRIGGER_WORDS);
+        uriMatcher.addURI(PROVIDER_NAME, CONTENT_URI_ENGLISH.getPath().substring(1), TRIGGER_WORDS);
+        uriMatcher.addURI(PROVIDER_NAME, CONTENT_URI_ENGLISH.getPath().substring(1),
+                MATCHER_TRIGGER_WORDS_TABLE_ENGLISH);
+        uriMatcher.addURI(PROVIDER_NAME, CONTENT_URI_SPANISH.getPath().substring(1),
+                MATCHER_TRIGGER_WORDS_TABLE_SPANISH);
     }
 
     @Override
@@ -71,8 +84,8 @@ public class AppContentProvider extends ContentProvider {
         SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
 
         // the TABLE_NAME to query on
-        queryBuilder.setTables(TABLE_TRIGGER_WORDS);
-        if (TextUtils.isEmpty(sortOrder)){
+        queryBuilder.setTables(TABLE_TRIGGER_WORDS_ENGLISH);
+        if (TextUtils.isEmpty(sortOrder)) {
             // No sorting-> sort on names by default
             sortOrder = COLUMN_TRIGGER_WORD;
         }
@@ -91,7 +104,7 @@ public class AppContentProvider extends ContentProvider {
 
     @Override
     public String getType(Uri uri) {
-        switch (uriMatcher.match(uri)){
+        switch (uriMatcher.match(uri)) {
             // Get all friend-birthday records
             case TRIGGER_WORDS:
                 return "vnd.android.cursor.dir/vnd.example.trigger_words";
@@ -105,11 +118,12 @@ public class AppContentProvider extends ContentProvider {
 
     @Override
     public Uri insert(Uri uri, ContentValues values) {
-        long row = database.insertWithOnConflict(TABLE_TRIGGER_WORDS, null, values, SQLiteDatabase.CONFLICT_REPLACE);
+        long row = database.insertWithOnConflict(TABLE_TRIGGER_WORDS_ENGLISH, null, values,
+                SQLiteDatabase.CONFLICT_REPLACE);
 
         // If record is added successfully
-        if(row > 0) {
-            Uri newUri = ContentUris.withAppendedId(CONTENT_URI, row);
+        if (row > 0) {
+            Uri newUri = ContentUris.withAppendedId(CONTENT_URI_ENGLISH, row);
             getContext().getContentResolver().notifyChange(newUri, null);
             return newUri;
         }
@@ -119,7 +133,19 @@ public class AppContentProvider extends ContentProvider {
 
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
-        throw new UnsupportedOperationException("This operation is currently unneeded and thus, unavailable");
+
+        int uriType = uriMatcher.match(uri);
+        int rowsDeleted = 0;
+
+        switch (uriType) {
+            case MATCHER_TRIGGER_WORDS_TABLE_ENGLISH:
+                rowsDeleted = database.delete(TABLE_TRIGGER_WORDS_ENGLISH, selection, selectionArgs);
+                break;
+            case MATCHER_TRIGGER_WORDS_TABLE_SPANISH:
+                rowsDeleted = database.delete(TABLE_TRIGGER_WORDS_ENGLISH, selection, selectionArgs);
+                break;
+        }
+        return rowsDeleted;
     }
 
     @Override
@@ -144,7 +170,7 @@ public class AppContentProvider extends ContentProvider {
             Log.w(DBHelper.class.getName(),
                     "Upgrading database from version " + oldVersion + " to "
                             + newVersion + ". Old data will be destroyed");
-            db.execSQL("DROP TABLE IF EXISTS " +  TABLE_TRIGGER_WORDS);
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_TRIGGER_WORDS_ENGLISH);
             onCreate(db);
         }
     }

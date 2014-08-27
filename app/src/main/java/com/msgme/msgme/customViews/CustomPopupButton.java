@@ -6,7 +6,8 @@ import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ImageButton;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
@@ -46,6 +47,7 @@ public class CustomPopupButton extends RelativeLayout {
     public void onTriggerWordFound(final int timeToResetButtonDrawable, final int popupTransitionDuration){
         final TransitionDrawable popupBgTransitionDrawable = (TransitionDrawable) mPopUpButtonBG.getDrawable();
         final TransitionDrawable popupCouponTransitionDrawable = (TransitionDrawable) mPopUpButtonCoupon.getDrawable();
+        final ImageView couponButton = (ImageView) getRootView().findViewById(R.id.popupButtonCoupon);
 
         popupCouponTransitionDrawable.setCrossFadeEnabled(true);
         popupBgTransitionDrawable.setCrossFadeEnabled(true);
@@ -55,15 +57,44 @@ public class CustomPopupButton extends RelativeLayout {
 
         //TODO: animate pulsating coupon icon....
 
+        startPulseAnimation(couponButton);
+
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                popupBgTransitionDrawable.reverseTransition(popupTransitionDuration);
-                popupCouponTransitionDrawable.reverseTransition(popupTransitionDuration);
-                mPopUpButtonRootView.setOnClickListener(null);
+                stopPulseAnimation(couponButton);
+
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        popupBgTransitionDrawable.reverseTransition(popupTransitionDuration);
+                        popupCouponTransitionDrawable.reverseTransition(popupTransitionDuration);
+                        mPopUpButtonRootView.setOnClickListener(null);
+                    }
+                }, 250);
+
 
             }
         }, 350 + timeToResetButtonDrawable);
+    }
+
+    public void startPulseAnimation(ImageView view){
+        Animation pulse = AnimationUtils.loadAnimation(getContext(), R.anim.pulse_animation_on);
+        view.startAnimation(pulse);
+    }
+
+    public void stopPulseAnimation(final ImageView view){
+        final Animation pulse = AnimationUtils.loadAnimation(getContext(), R.anim.pulse_animation_off);
+
+        // Stupid android. Needs to post to UI for this animation to work because this method is called from a Handler
+        // weird stuff....
+        view.post(new Runnable() {
+            @Override
+            public void run() {
+                view.startAnimation(pulse);
+            }
+        });
+        view.clearAnimation();
     }
 
 

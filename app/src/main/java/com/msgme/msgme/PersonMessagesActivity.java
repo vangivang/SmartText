@@ -1,7 +1,5 @@
 package com.msgme.msgme;
 
-import static com.nineoldandroids.view.ViewPropertyAnimator.animate;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
@@ -13,7 +11,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.graphics.drawable.TransitionDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -33,9 +30,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.MultiAutoCompleteTextView;
@@ -409,7 +404,7 @@ public class PersonMessagesActivity extends Activity {
 
                     for (String string : tokens) {
                         Cursor triggerWordsCursor = getContentResolver().query
-                                (AppContentProvider.CONTENT_URI,
+                                (AppContentProvider.CONTENT_URI_ENGLISH,
                                         columns, "UPPER(" + AppContentProvider
                                                 .COLUMN_TRIGGER_WORD + ") =?",
                                         new String[]{string.toUpperCase()}, null);

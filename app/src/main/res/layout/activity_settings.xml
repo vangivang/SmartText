@@ -1,22 +1,22 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:background="@color/grid_alternate_1"
-    android:orientation="vertical"
-    tools:context=".SettingsActivity" >
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:background="@color/grid_alternate_1"
+                android:orientation="vertical"
+                tools:context=".SettingsActivity">
 
     <FrameLayout
         android:id="@+id/header"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content">
 
         <ImageView
             android:id="@+id/action_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:scaleType="fitXY"
-            android:src="@drawable/top_bar" >
+            android:src="@drawable/top_bar">
         </ImageView>
 
         <ImageView
@@ -27,7 +27,7 @@
             android:layout_marginLeft="7dp"
             android:layout_marginTop="15dp"
             android:clickable="true"
-            android:src="@drawable/btn_back" />
+            android:src="@drawable/btn_back"/>
 
         <TextView
             android:id="@+id/txtSettings"
@@ -39,7 +39,7 @@
             android:text="Settings"
             android:textColor="#ffffff"
             android:textSize="18dp"
-            android:textStyle="bold" />
+            android:textStyle="bold"/>
     </FrameLayout>
 
     <LinearLayout
@@ -49,12 +49,12 @@
         android:layout_below="@+id/header"
         android:layout_gravity="center|left"
         android:background="@color/grid_alternate_1"
-        android:gravity="left|center" >
+        android:gravity="left|center">
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical" >
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/tvLLogos"
@@ -66,7 +66,7 @@
                 android:text="Show Logos"
                 android:textColor="@color/conversation_user_name"
                 android:textSize="13sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"/>
 
             <TextView
                 android:id="@+id/tvDescription"
@@ -76,12 +76,12 @@
                 android:layout_marginLeft="15dp"
                 android:text="Display commercial logos on chat"
                 android:textColor="@color/conversation_text"
-                android:textSize="10sp" />
+                android:textSize="10sp"/>
         </LinearLayout>
 
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="fill_parent" >
+            android:layout_height="fill_parent">
 
             <ToggleButton
                 android:id="@+id/tbShowLogos"
@@ -93,7 +93,7 @@
                 android:checked="true"
                 android:onClick="onShowLogosClicked"
                 android:textOff=""
-                android:textOn="" />
+                android:textOn=""/>
         </FrameLayout>
     </LinearLayout>
 
@@ -103,7 +103,8 @@
         android:layout_height="1dp"
         android:layout_alignParentTop="false"
         android:layout_below="@+id/logos"
-        android:background="@color/settings_divider" />
+        android:orientation="horizontal"
+        android:background="@color/settings_divider"/>
 
     <LinearLayout
         android:id="@+id/icons"
@@ -112,12 +113,12 @@
         android:layout_below="@+id/sep1"
         android:layout_gravity="center|left"
         android:background="@color/grid_alternate_1"
-        android:gravity="left|center" >
+        android:gravity="left|center">
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical" >
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/tvIcons"
@@ -129,7 +130,7 @@
                 android:text="Show Icons"
                 android:textColor="@color/conversation_user_name"
                 android:textSize="13sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"/>
 
             <TextView
                 android:id="@+id/tvDescription2"
@@ -139,12 +140,12 @@
                 android:layout_marginLeft="15dp"
                 android:text="Display keyword icons"
                 android:textColor="@color/conversation_text"
-                android:textSize="10sp" />
+                android:textSize="10sp"/>
         </LinearLayout>
 
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="fill_parent" >
+            android:layout_height="fill_parent">
 
             <ToggleButton
                 android:id="@+id/tbShowIcons"
@@ -156,18 +157,10 @@
                 android:checked="true"
                 android:onClick="onShowIconsClicked"
                 android:textOff=""
-                android:textOn="" />
+                android:textOn=""/>
         </FrameLayout>
 
-        <ToggleButton
-            android:id="@+id/tbShowIcons"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right|center"
-            android:layout_marginRight="20dp"
-            android:background="@drawable/tgl_settings"
-            android:checked="true"
-            android:onClick="onShowIconsClicked" />
+
     </LinearLayout>
 
     <LinearLayout
@@ -175,7 +168,8 @@
         android:layout_width="fill_parent"
         android:layout_height="1dp"
         android:layout_below="@+id/icons"
-        android:background="@color/settings_divider" />
+        android:orientation="horizontal"
+        android:background="@color/settings_divider"/>
 
     <LinearLayout
         android:id="@+id/requestIcon"
@@ -184,7 +178,7 @@
         android:layout_below="@+id/sep2"
         android:layout_marginRight="0dp"
         android:background="@color/grid_alternate_1"
-        android:gravity="left|center" >
+        android:gravity="left|center">
 
         <EditText
             android:id="@+id/etRequestIcon"
@@ -197,7 +191,7 @@
             android:hint="Ask for icon!"
             android:textColor="@color/conversation_user_name"
             android:textSize="13sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"/>
 
         <ImageView
             android:id="@+id/btnRequestIcon"
@@ -209,7 +203,7 @@
             android:layout_marginRight="20dp"
             android:clickable="true"
             android:enabled="false"
-            android:src="@drawable/btn_send_mail" />
+            android:src="@drawable/btn_send_mail"/>
     </LinearLayout>
 
     <TextView
@@ -221,7 +215,7 @@
         android:layout_marginTop="-20dp"
         android:text="Type in any desired word - and we&apos;ll make it. "
         android:textColor="@color/conversation_text"
-        android:textSize="10sp" />
+        android:textSize="10sp"/>
 
     <RelativeLayout
         android:id="@+id/footer"
@@ -230,7 +224,7 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="false"
         android:layout_below="@+id/requestIcon"
-        android:background="@drawable/logo_bg" >
+        android:background="@drawable/logo_bg">
 
         <TextView
             android:id="@+id/txtSlogan"
@@ -246,7 +240,7 @@
             android:text="Get more of smartext - join us on:"
             android:textColor="#ebebeb"
             android:textSize="11sp"
-            android:textStyle="bold|normal" />
+            android:textStyle="bold|normal"/>
 
         <LinearLayout
             android:id="@+id/linksLayout"
@@ -255,14 +249,14 @@
             android:layout_above="@+id/ivSeperator"
             android:layout_gravity="center"
             android:layout_marginBottom="5dp"
-            android:gravity="center" >
+            android:gravity="center">
 
             <ImageView
                 android:id="@+id/ivFacebook"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:clickable="true"
-                android:src="@drawable/btn_facebook" />
+                android:src="@drawable/btn_facebook"/>
 
             <ImageView
                 android:id="@+id/ivGplus"
@@ -271,14 +265,14 @@
                 android:layout_marginLeft="15dp"
                 android:layout_marginRight="15dp"
                 android:clickable="true"
-                android:src="@drawable/btn_gplus" />
+                android:src="@drawable/btn_gplus"/>
 
             <ImageView
                 android:id="@+id/ivTwitter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:clickable="true"
-                android:src="@drawable/btn_twitter" />
+                android:src="@drawable/btn_twitter"/>
         </LinearLayout>
 
         <ImageView
@@ -289,7 +283,7 @@
             android:layout_centerInParent="true"
             android:layout_centerVertical="true"
             android:clickable="true"
-            android:src="@drawable/seperate_line" />
+            android:src="@drawable/seperate_line"/>
 
         <ImageView
             android:id="@+id/ivLogo"
@@ -299,7 +293,7 @@
             android:layout_marginTop="5dp"
             android:clickable="true"
             android:maxHeight="130dp"
-            android:src="@drawable/logo_2" />
+            android:src="@drawable/logo_2"/>
 
     </RelativeLayout>
 

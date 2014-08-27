@@ -175,7 +175,7 @@
             android:text="Google/Youtube" />
 
         <TextView
-            android:id="@+id/TextView03"
+            android:id="@+id/TextView04"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="0dp"
