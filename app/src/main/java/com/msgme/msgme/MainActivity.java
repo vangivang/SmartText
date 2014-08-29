@@ -31,6 +31,7 @@ import android.widget.Toast;
 
 import com.msgme.msgme.adapters.ContactMessagesAdapter;
 import com.msgme.msgme.database.AppContentProvider;
+import com.msgme.msgme.database.TriggerWordEntity;
 import com.msgme.msgme.storage.SharedPreferencesManager;
 import com.msgme.msgme.vo.ContactMessages;
 import com.msgme.msgme.vo.Message;
@@ -124,7 +125,7 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        String[] xmlUrls = {"temp_trigger_words_a.xml", "temp_trigger_words_b.xml"};
+        String[] xmlUrls = {"real_entries.xml"};
 
         ASyncDownloader downloader = new ASyncDownloader(xmlUrls);
         downloader.execute(xmlUrls);
@@ -535,15 +536,17 @@ public class MainActivity extends Activity {
     private class ASyncDownloader extends AsyncTask<String, String, Void> {
 
         private String[] mUrls;
+        private ArrayList<TriggerWordEntity> mWordEntities;
 
         private ASyncDownloader(String[] urls) {
 
-            // Delete database content if exists
-            if (doesDatabaseExist(MainActivity.this, AppContentProvider.DATABASE_NAME)){
+            // Delete database content if exists before getting new words
+            if (doesDatabaseExist(MainActivity.this, AppContentProvider.DATABASE_NAME)) {
                 deleteTablesData();
             }
 
             mUrls = urls;
+            mWordEntities = new ArrayList<TriggerWordEntity>();
         }
 
         @Override
@@ -615,16 +618,47 @@ public class MainActivity extends Activity {
         private void processReceivedData(XmlPullParser xmlData) throws XmlPullParserException, IOException {
 
             int recordsFound = 0;
+            boolean couponInserted = false;
 
             String text = "";
             String url = "";
-
+            String language = "";
+            String couponText = "";
             int eventType = xmlData.getEventType();
+
+
+            // 1. Look for language tag and get the language name attribute
+            // 2. Look for coupon tag and save it
+            // 3. Look for text tag and get the coupon text
+            // 4. Look for url tag and get the url for that text
+            // 5. Repeat 3,4 until end
+            // 6. Repeat 1-5 again until all languages are processed
             while (eventType != XmlPullParser.END_DOCUMENT) {
                 String tagName = xmlData.getName();
 
                 if (eventType == XmlPullParser.START_TAG) {
-                    if (tagName.equalsIgnoreCase("text")) {
+                    if (tagName.equalsIgnoreCase("language")) {
+                        language = xmlData.getAttributeValue(null, "name");
+                        couponInserted = false;
+                        recordsFound = 0;
+                    } else if (tagName.equalsIgnoreCase("coupon")) {
+
+                        int subEventType = xmlData.getEventType();
+                        while (subEventType != XmlPullParser.END_TAG) {
+                            String subName = xmlData.getName();
+
+                            if (subEventType == XmlPullParser.START_TAG) {
+                                if (subName.equalsIgnoreCase("text")) {
+                                    couponText = xmlData.nextText();
+                                    couponInserted = true;
+                                    recordsFound++;
+                                }
+                            }
+
+                            subEventType = xmlData.next();
+                        }
+
+                    } else if (tagName.equalsIgnoreCase("text")) {
                         text = xmlData.nextText();
                         recordsFound++;
                     } else if (tagName.equalsIgnoreCase("url")) {
@@ -633,12 +667,22 @@ public class MainActivity extends Activity {
                     }
                 }
 
-                // If we have 2 records found, it means the xml produced 1 text + 1 url... so lets insert to DB
-                if (recordsFound == 2) {
-                    publishProgress(text, url);
-                    recordsFound = 0;
+                // If we have 3 records found, it means the xml produced 1 text + 1 url + 1 coupon text... so lets
+                // insert into DB
+                if (recordsFound == 3) {
+                    mWordEntities.add(new TriggerWordEntity(language, couponText, text, url));
+                    if (couponInserted) {
+
+                        // Because the counter goes up to 3, we are setting it to 1 here because
+                        // we already found a coupon at the beginning which is the first record of of 3.
+                        // When we reach a new language, we will reset it back to 0 because we need to
+                        // find a coupon first.
+                        recordsFound = 1;
+                    } else {
+                        recordsFound = 0;
+                    }
                 } else {
-                    Log.d("LOGGY", "No data found in current url");
+                    Log.d(TAG, "Haven't found 3 records yet");
                 }
 
                 eventType = xmlData.next();
@@ -646,28 +690,45 @@ public class MainActivity extends Activity {
         }
 
         @Override
-        protected void onProgressUpdate(String... values) {
-
-            insertRowIntoDatabase(values);
-            super.onProgressUpdate(values);
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            insertDataIntoDatabase(mWordEntities);
         }
 
-        private void deleteTablesData(){
-
-            // TODO: delete all language tables.
-            getContentResolver().delete(AppContentProvider.CONTENT_URI_ENGLISH, null, null);
+        private void deleteTablesData() {
+            int rowsDeleted = getContentResolver().delete(AppContentProvider.CONTENT_URI_ALL_TABLES, null, null);
+            Log.d(TAG, "Number of rows deleted-->" + rowsDeleted);
         }
 
-        private void insertRowIntoDatabase(String[] values) {
-            String triggerWord = values[0];
-            String wordImageUrl = values[1];
-            ContentValues contentValues = new ContentValues();
-            contentValues.put(AppContentProvider.COLUMN_TRIGGER_WORD, triggerWord);
-            contentValues.put(AppContentProvider.COLUMN_TRIGGER_WORD_IMAGE_URL, wordImageUrl);
+        private void insertDataIntoDatabase(ArrayList<TriggerWordEntity> entities){
 
-            // call DB and insert row
-            Uri uri = getContentResolver().insert(AppContentProvider.CONTENT_URI_ENGLISH, contentValues);
-            Log.d(TAG, uri.toString() + " inserted!");
+            for (TriggerWordEntity entity : entities){
+                ContentValues contentValues = new ContentValues();
+                contentValues.put(AppContentProvider.COLUMN_COUPON_TEXT, entity.getCouponText());
+                contentValues.put(AppContentProvider.COLUMN_TRIGGER_WORD, entity.getText());
+                contentValues.put(AppContentProvider.COLUMN_TRIGGER_WORD_IMAGE_URL, entity.getImageUrl());
+
+                Uri tableUri = null;
+                String language = entity.getLanguage();
+                if (language.equalsIgnoreCase("english")) {
+                    tableUri = AppContentProvider.CONTENT_URI_ENGLISH;
+                } else if (language.equalsIgnoreCase("portuguese")) {
+                    tableUri = AppContentProvider.CONTENT_URI_PORTUGUESE;
+                } else if (language.equalsIgnoreCase("spanish")) {
+                    tableUri = AppContentProvider.CONTENT_URI_SPANISH;
+                } else if (language.equalsIgnoreCase("arabic")) {
+                    tableUri = AppContentProvider.CONTENT_URI_ARABIC;
+                } else if (language.equalsIgnoreCase("chinese")) {
+                    tableUri = AppContentProvider.CONTENT_URI_CHINESE;
+                }
+
+                if (tableUri != null) {
+                    // call DB and insert row
+                    getContentResolver().insert(tableUri, contentValues);
+                } else {
+                    Log.d(TAG, "No proper table was found for this language" + language);
+                }
+            }
         }
 
         private boolean doesDatabaseExist(ContextWrapper context, String dbName) {

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<trigger_words>
+    <language name="english">
+
+        <coupon>
+            <text>would you like a coupon for x nearby ?</text>
+        </coupon>
+
+        <entry>
+            <text>pizza</text>
+            <url>http://smartxt.me/images/pizza.png</url>
+        </entry>
+
+        <entry>
+            <text>pasta</text>
+            <url>http://smartxt.me/images/pasta.png</url>
+        </entry>
+
+    </language>
+
+    <language name="portuguese">
+
+        <coupon>
+            <text>cupom para x nas proximidades?</text>
+        </coupon>
+
+        <entry>
+            <text>pizza</text>
+            <url>http://smartxt.me/images/pizza.png</url>
+        </entry>
+
+        <entry>
+            <text>massas</text>
+            <url>http://smartxt.me/images/pasta.png</url>
+        </entry>
+
+    </language>
+
+    <language name="spanish">
+
+        <coupon>
+            <text>quieres un cupón para x cerca?</text>
+        </coupon>
+
+        <entry>
+            <text>pizza</text>
+            <url>http://smartxt.me/images/pizza.png</url>
+        </entry>
+
+        <entry>
+            <text>massas</text>
+            <url>http://smartxt.me/images/pasta.png</url>
+        </entry>
+
+    </language>
+
+    <language name="arabic">
+
+        <coupon>
+            <text>تريد قسيمة x يوجد بالقرب منها؟?</text>
+        </coupon>
+
+        <entry>
+            <text>البيتزا</text>
+            <url>http://smartxt.me/images/pizza.png</url>
+        </entry>
+
+        <entry>
+            <text>المعكرونة</text>
+            <url>http://smartxt.me/images/pasta.png</url>
+        </entry>
+
+    </language>
+
+    <language name="chinese">
+
+        <coupon>
+            <text>你想获得优惠券的 x 附近吗？</text>
+        </coupon>
+
+        <entry>
+            <text>比萨</text>
+            <url>http://smartxt.me/images/pizza.png</url>
+        </entry>
+
+        <entry>
+            <text>面食</text>
+            <url>http://smartxt.me/images/pasta.png</url>
+        </entry>
+
+    </language>
+</trigger_words>

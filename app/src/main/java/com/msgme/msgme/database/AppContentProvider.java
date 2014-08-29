@@ -14,7 +14,7 @@ import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 
 /**
  * Created by alonm on 8/22/14.
@@ -25,55 +25,115 @@ public class AppContentProvider extends ContentProvider {
     private SQLiteDatabase database;
     private static final int DATABASE_VERSION = 1;
     public static final String DATABASE_NAME = "trigger_words.db";
-    public static final String TABLE_TRIGGER_WORDS_ENGLISH = "trigger_words_english";
-    public static final String TABLE_TRIGGER_WORDS_SPANISH = "trigger_words_spanish";
 
+    // DB tables
+    public static final String TABLE_TRIGGER_WORDS_ENGLISH = "trigger_words_english";
+    public static final String TABLE_TRIGGER_WORDS_PORTUGUESE = "trigger_words_portuguese";
+    public static final String TABLE_TRIGGER_WORDS_SPANISH = "trigger_words_spanish";
+    public static final String TABLE_TRIGGER_WORDS_ARABIC = "trigger_words_arabic";
+    public static final String TABLE_TRIGGER_WORDS_CHINESE = "trigger_words_chinese";
+    public static final String ALL_TABLES = "all_tables";
+
+    // DB columns
     public static final String COLUMN_ID = "_id";
     public static final String COLUMN_TRIGGER_WORD = "trigger_word";
     public static final String COLUMN_TRIGGER_WORD_IMAGE_URL = "trigger_word_image_url";
+    public static final String COLUMN_COUPON_TEXT = "coupon_text";
 
-    private static final String CREATE_TABLE = "create table "
+    // DB creation strings
+    private static final String CREATE_TABLE_ENGLISH = "create table "
             + TABLE_TRIGGER_WORDS_ENGLISH
             + "("
             + COLUMN_ID + " integer primary key autoincrement, "
-            + COLUMN_TRIGGER_WORD + " text not null unique, "
-            + COLUMN_TRIGGER_WORD_IMAGE_URL + " text not null unique"
+            + COLUMN_TRIGGER_WORD + " text not null, "
+            + COLUMN_TRIGGER_WORD_IMAGE_URL + " text not null, "
+            + COLUMN_COUPON_TEXT + " text not null"
+            + ");";
+    private static final String CREATE_TABLE_PORTUGUESE = "create table "
+            + TABLE_TRIGGER_WORDS_PORTUGUESE
+            + "("
+            + COLUMN_ID + " integer primary key autoincrement, "
+            + COLUMN_TRIGGER_WORD + " text not null, "
+            + COLUMN_TRIGGER_WORD_IMAGE_URL + " text not null, "
+            + COLUMN_COUPON_TEXT + " text not null"
+            + ");";
+    private static final String CREATE_TABLE_SPANISH = "create table "
+            + TABLE_TRIGGER_WORDS_SPANISH
+            + "("
+            + COLUMN_ID + " integer primary key autoincrement, "
+            + COLUMN_TRIGGER_WORD + " text not null, "
+            + COLUMN_TRIGGER_WORD_IMAGE_URL + " text not null, "
+            + COLUMN_COUPON_TEXT + " text not null"
+            + ");";
+    private static final String CREATE_TABLE_ARABIC = "create table "
+            + TABLE_TRIGGER_WORDS_ARABIC
+            + "("
+            + COLUMN_ID + " integer primary key autoincrement, "
+            + COLUMN_TRIGGER_WORD + " text not null, "
+            + COLUMN_TRIGGER_WORD_IMAGE_URL + " text not null, "
+            + COLUMN_COUPON_TEXT + " text not null"
+            + ");";
+    private static final String CREATE_TABLE_CHINESE = "create table "
+            + TABLE_TRIGGER_WORDS_CHINESE
+            + "("
+            + COLUMN_ID + " integer primary key autoincrement, "
+            + COLUMN_TRIGGER_WORD + " text not null, "
+            + COLUMN_TRIGGER_WORD_IMAGE_URL + " text not null, "
+            + COLUMN_COUPON_TEXT + " text not null"
             + ");";
 
-    // fields for my content provider
-    private static final String PROVIDER_NAME = "com.msgme.msgme.database.AppContentProvider";
-    private static final String URL = "content://" + PROVIDER_NAME + "/%s";
+    // Fields for my content provider
+    private static final String AUTHORITY = "com.msgme.msgme.database.AppContentProvider";
+    private static final String URL = "content://" + AUTHORITY + "/%s";
 
+    // Content Uris for content provider calls
     public static final Uri CONTENT_URI_ENGLISH = formUri(TABLE_TRIGGER_WORDS_ENGLISH);
+    public static final Uri CONTENT_URI_PORTUGUESE = formUri(TABLE_TRIGGER_WORDS_PORTUGUESE);
     public static final Uri CONTENT_URI_SPANISH = formUri(TABLE_TRIGGER_WORDS_SPANISH);
-//    public static final Uri CONTENT_URI_ENGLISH = Uri.parse(URL);
+    public static final Uri CONTENT_URI_ARABIC = formUri(TABLE_TRIGGER_WORDS_ARABIC);
+    public static final Uri CONTENT_URI_CHINESE = formUri(TABLE_TRIGGER_WORDS_CHINESE);
+    public static final Uri CONTENT_URI_ALL_TABLES = formUri(ALL_TABLES);
 
-    // integer values used in content URI
+    // Integer values used in content URI and matcher
     private static final int TRIGGER_WORDS = 1;
     private static final int TRIGGER_WORD_ID = 2;
     private static final int MATCHER_TRIGGER_WORDS_TABLE_ENGLISH = 3;
-    private static final int MATCHER_TRIGGER_WORDS_TABLE_SPANISH = 4;
+    private static final int MATCHER_TRIGGER_WORDS_TABLE_PORTUGUESE = 4;
+    private static final int MATCHER_TRIGGER_WORDS_TABLE_SPANISH = 5;
+    private static final int MATCHER_TRIGGER_WORDS_TABLE_ARABIC = 6;
+    private static final int MATCHER_TRIGGER_WORDS_TABLE_CHINESE = 7;
+    private static final int MATCHER_TRIGGER_WORDS_ALL_TABLES = 8;
 
-    // projection map for a query
-    private static HashMap<String, String> WordsMap;
-
-    // maps content URI "patterns" to the integer values that were set above
+    // Map content URI "patterns" to the integer values that were set above
     static final UriMatcher uriMatcher;
-
     static {
         uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-        uriMatcher.addURI(PROVIDER_NAME, CONTENT_URI_ENGLISH.getPath().substring(1), TRIGGER_WORDS);
-        uriMatcher.addURI(PROVIDER_NAME, CONTENT_URI_ENGLISH.getPath().substring(1),
+        uriMatcher.addURI(AUTHORITY, CONTENT_URI_ENGLISH.getPath().substring(1),
                 MATCHER_TRIGGER_WORDS_TABLE_ENGLISH);
-        uriMatcher.addURI(PROVIDER_NAME, CONTENT_URI_SPANISH.getPath().substring(1),
+        uriMatcher.addURI(AUTHORITY, CONTENT_URI_PORTUGUESE.getPath().substring(1),
+                MATCHER_TRIGGER_WORDS_TABLE_PORTUGUESE);
+        uriMatcher.addURI(AUTHORITY, CONTENT_URI_SPANISH.getPath().substring(1),
                 MATCHER_TRIGGER_WORDS_TABLE_SPANISH);
+        uriMatcher.addURI(AUTHORITY, CONTENT_URI_ARABIC.getPath().substring(1), MATCHER_TRIGGER_WORDS_TABLE_ARABIC);
+        uriMatcher.addURI(AUTHORITY, CONTENT_URI_CHINESE.getPath().substring(1),
+                MATCHER_TRIGGER_WORDS_TABLE_CHINESE);
+        uriMatcher.addURI(AUTHORITY, CONTENT_URI_ALL_TABLES.getPath().substring(1), MATCHER_TRIGGER_WORDS_ALL_TABLES);
     }
+
+    public static ArrayList<Uri> mContracts;
 
     @Override
     public boolean onCreate() {
 
         DBHelper dbHelper = new DBHelper(getContext());
         database = dbHelper.getWritableDatabase();
+
+        mContracts = new ArrayList<Uri>();
+        mContracts.add(CONTENT_URI_ENGLISH);
+        mContracts.add(CONTENT_URI_PORTUGUESE);
+        mContracts.add(CONTENT_URI_SPANISH);
+        mContracts.add(CONTENT_URI_ARABIC);
+        mContracts.add(CONTENT_URI_CHINESE);
 
         return database != null;
     }
@@ -118,12 +178,40 @@ public class AppContentProvider extends ContentProvider {
 
     @Override
     public Uri insert(Uri uri, ContentValues values) {
-        long row = database.insertWithOnConflict(TABLE_TRIGGER_WORDS_ENGLISH, null, values,
-                SQLiteDatabase.CONFLICT_REPLACE);
+        int uriType = uriMatcher.match(uri);
+        long row = 0;
+        Uri newUri = null;
+
+        switch (uriType) {
+            case MATCHER_TRIGGER_WORDS_TABLE_ENGLISH:
+                row = database.insertWithOnConflict(TABLE_TRIGGER_WORDS_ENGLISH, null, values,
+                        SQLiteDatabase.CONFLICT_REPLACE);
+                newUri = ContentUris.withAppendedId(CONTENT_URI_ENGLISH, row);
+                break;
+            case MATCHER_TRIGGER_WORDS_TABLE_PORTUGUESE:
+                row = database.insertWithOnConflict(TABLE_TRIGGER_WORDS_PORTUGUESE, null, values,
+                        SQLiteDatabase.CONFLICT_REPLACE);
+                newUri = ContentUris.withAppendedId(CONTENT_URI_PORTUGUESE, row);
+                break;
+            case MATCHER_TRIGGER_WORDS_TABLE_SPANISH:
+                row = database.insertWithOnConflict(TABLE_TRIGGER_WORDS_SPANISH, null, values,
+                        SQLiteDatabase.CONFLICT_REPLACE);
+                newUri = ContentUris.withAppendedId(CONTENT_URI_SPANISH, row);
+                break;
+            case MATCHER_TRIGGER_WORDS_TABLE_ARABIC:
+                row = database.insertWithOnConflict(TABLE_TRIGGER_WORDS_ARABIC, null, values,
+                        SQLiteDatabase.CONFLICT_REPLACE);
+                newUri = ContentUris.withAppendedId(CONTENT_URI_ARABIC, row);
+                break;
+            case MATCHER_TRIGGER_WORDS_TABLE_CHINESE:
+                row = database.insertWithOnConflict(TABLE_TRIGGER_WORDS_CHINESE, null, values,
+                        SQLiteDatabase.CONFLICT_REPLACE);
+                newUri = ContentUris.withAppendedId(CONTENT_URI_CHINESE, row);
+                break;
+        }
 
         // If record is added successfully
         if (row > 0) {
-            Uri newUri = ContentUris.withAppendedId(CONTENT_URI_ENGLISH, row);
             getContext().getContentResolver().notifyChange(newUri, null);
             return newUri;
         }
@@ -141,8 +229,33 @@ public class AppContentProvider extends ContentProvider {
             case MATCHER_TRIGGER_WORDS_TABLE_ENGLISH:
                 rowsDeleted = database.delete(TABLE_TRIGGER_WORDS_ENGLISH, selection, selectionArgs);
                 break;
+            case MATCHER_TRIGGER_WORDS_TABLE_PORTUGUESE:
+                rowsDeleted = database.delete(TABLE_TRIGGER_WORDS_PORTUGUESE, selection, selectionArgs);
+                break;
             case MATCHER_TRIGGER_WORDS_TABLE_SPANISH:
-                rowsDeleted = database.delete(TABLE_TRIGGER_WORDS_ENGLISH, selection, selectionArgs);
+                rowsDeleted = database.delete(TABLE_TRIGGER_WORDS_SPANISH, selection, selectionArgs);
+                break;
+            case MATCHER_TRIGGER_WORDS_TABLE_ARABIC:
+                rowsDeleted = database.delete(TABLE_TRIGGER_WORDS_ARABIC, selection, selectionArgs);
+                break;
+            case MATCHER_TRIGGER_WORDS_TABLE_CHINESE:
+                rowsDeleted = database.delete(TABLE_TRIGGER_WORDS_CHINESE, selection, selectionArgs);
+                break;
+            case MATCHER_TRIGGER_WORDS_ALL_TABLES:
+
+                database.beginTransaction();
+
+                try {
+                    for (Uri tableUri : mContracts) {
+                        rowsDeleted += delete(tableUri, selection, selectionArgs);
+                    }
+                    database.setTransactionSuccessful();
+                } catch (Exception e) {
+
+                } finally {
+                    database.endTransaction();
+                }
+
                 break;
         }
         return rowsDeleted;
@@ -162,7 +275,11 @@ public class AppContentProvider extends ContentProvider {
 
         @Override
         public void onCreate(SQLiteDatabase db) {
-            db.execSQL(CREATE_TABLE);
+            db.execSQL(CREATE_TABLE_ENGLISH);
+            db.execSQL(CREATE_TABLE_PORTUGUESE);
+            db.execSQL(CREATE_TABLE_SPANISH);
+            db.execSQL(CREATE_TABLE_ARABIC);
+            db.execSQL(CREATE_TABLE_CHINESE);
         }
 
         @Override
@@ -171,6 +288,10 @@ public class AppContentProvider extends ContentProvider {
                     "Upgrading database from version " + oldVersion + " to "
                             + newVersion + ". Old data will be destroyed");
             db.execSQL("DROP TABLE IF EXISTS " + TABLE_TRIGGER_WORDS_ENGLISH);
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_TRIGGER_WORDS_PORTUGUESE);
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_TRIGGER_WORDS_SPANISH);
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_TRIGGER_WORDS_ARABIC);
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_TRIGGER_WORDS_CHINESE);
             onCreate(db);
         }
     }
