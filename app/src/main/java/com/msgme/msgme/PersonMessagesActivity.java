@@ -113,7 +113,7 @@ public class PersonMessagesActivity extends Activity {
         @Override
         protected String doInBackground(String... params) {
             if (mutex == 0)
-                getMessagesByThreadId();
+                getMessagesByThreadId(true);
             ++mutex;
 
             return null;
@@ -345,7 +345,7 @@ public class PersonMessagesActivity extends Activity {
         tvPersonalMessagesTitle.setText(contactMessages.getName() == null ? contactMessages.getPhone() :
                 contactMessages.getName());
 
-        getMessagesByThreadId();
+        getMessagesByThreadId(false);
 
         showMessages();
     }
@@ -357,7 +357,15 @@ public class PersonMessagesActivity extends Activity {
         lvMessagesList.setAdapter(adapter);
     }
 
-    private void getMessagesByThreadId() {
+    /**
+     * Updates the list of message to parse back into view
+     *
+     * @param isHereAfterMessagesListItemClicked If this is true, we do not need to examine for trigger words because we
+     *                                           only just arrived here. If false,
+     *                                           it means we just received a new message
+     *                                           hence, a new word to check as a trigger word
+     */
+    private void getMessagesByThreadId(boolean isHereAfterMessagesListItemClicked) {
         Uri mSmsinboxQueryUri = Uri.parse("content://sms");
 
         String[] mSelectionArgs = new String[1];
@@ -370,9 +378,94 @@ public class PersonMessagesActivity extends Activity {
             contactMessages.AddNewMsgs(cursor);
         }
 
+        if (isHereAfterMessagesListItemClicked && !isMessageSent) {
+            String bodyOfNewMessage = null;
+
+            // Get the latest message entered to database
+            Cursor lastMessageCursor = getContentResolver().query(mSmsinboxQueryUri, new String[]{"body"},
+                    "thread_id = ?", mSelectionArgs, "_id DESC limit 1");
+            if (lastMessageCursor.moveToFirst()) {
+
+                // We have a last message, lets check if its a trigger word
+                bodyOfNewMessage = lastMessageCursor.getString(lastMessageCursor.getColumnIndex("body"));
+                examineSMSTextForTriggerWords(bodyOfNewMessage);
+            }
+            lastMessageCursor.close();
+        }
+
+
         cursor.close();
     }
 
+    /**
+     * Will examine whether smsMessageBody contains a trigger word. If it does, it will light up the popup button
+     * @param smsMessageBody The text to examine for a trigger word
+     */
+    private void examineSMSTextForTriggerWords(String smsMessageBody) {
+        // Get the outgoing text and trim from both ends of the string white spaces.
+        // + inside the regex denotes consecutive white spaces as well (not only a
+        // single one)
+
+        if (!TextUtils.isEmpty(smsMessageBody)) {
+
+            String whiteSpaceTrimmedText = smsMessageBody.replaceAll
+                    ("^\\s+|\\s+$", "");
+
+            // Split the string using these delimiters. Again + denotes consecutive
+            // chars as well not only a single one
+            String delims = "[ .,?!]+";
+            String[] tokens = whiteSpaceTrimmedText.split(delims);
+
+            // For each word token in array, check in data base if there is a
+            // corresponding trigger word
+            String triggerWordUrl = null;
+            String[] columns = {AppContentProvider.COLUMN_TRIGGER_WORD,
+                    AppContentProvider.COLUMN_TRIGGER_WORD_IMAGE_URL};
+
+            for (String string : tokens) {
+                Cursor triggerWordsCursor = getContentResolver().query
+                        (AppContentProvider.CONTENT_URI_ENGLISH,
+                                columns, "UPPER(" + AppContentProvider
+                                        .COLUMN_TRIGGER_WORD + ") =?",
+                                new String[]{string.toUpperCase()}, null);
+
+                // If we have results, save the url of that word token and exit loop
+                // We leave the loop because currently, one word is enough
+                if (triggerWordsCursor.moveToFirst()) {
+                    triggerWordUrl = triggerWordsCursor.getString(1);
+                    triggerWordsCursor.close();
+                    break;
+                }
+            }
+
+            // If we have a url, we can execute a pop up animation
+            if (triggerWordUrl != null) {
+
+                // TODO: get this value from preferences or main application
+                final int timeToResetButtonDrawable = 5000;
+
+                // TODO: Perhaps get transition duration from server as well?
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mPopUpButton.onTriggerWordFound(timeToResetButtonDrawable, 500);
+                    }
+                });
+                mPopUpButton.setOnClickListenerToRootView(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //TODO: open pop up view animatedly
+                        closeKeyboard(mPopUpButton);
+                        Toast.makeText(PersonMessagesActivity.this, "Pop up clicked... animate view",
+                                Toast.LENGTH_LONG).show();
+                    }
+                });
+
+            } else {
+                Log.d("LOGGY", "We have no url");
+            }
+        }
+    }
 
     private void setUpSmsSendButtonClickListener() {
 
@@ -381,74 +474,20 @@ public class PersonMessagesActivity extends Activity {
             @Override
             public void onClick(View v) {
 
-                // Get the outgoing text and trim from both ends of the string white spaces.
-                // + inside the regex denotes consecutive white spaces as well (not only a
-                // single one)
-                String outMessageText = tiMessageBody.getText(true);
+                String contact;
+                MultiAutoCompleteTextView txtPhoneNumber = (MultiAutoCompleteTextView)
+                        findViewById(R.id.txtPhoneNumber);
 
-                if (!TextUtils.isEmpty(outMessageText)) {
+                //Send from person messages view
+                if (txtPhoneNumber.getVisibility() == View.GONE) {
+                    contact = contactMessages.getPhone();
+                } else {
+                    contact = txtPhoneNumber.getText().toString();
+                }
 
-                    String whiteSpaceTrimmedText = outMessageText.replaceAll
-                            ("^\\s+|\\s+$", "");
+                if (!TextUtils.isEmpty(contact)) {
 
-                    // Split the string using these delimiters. Again + denotes consecutive
-                    // chars as well not only a single one
-                    String delims = "[ .,?!]+";
-                    String[] tokens = whiteSpaceTrimmedText.split(delims);
-
-                    // For each word token in array, check in data base if there is a
-                    // corresponding trigger word
-                    String triggerWordUrl = null;
-                    String[] columns = {AppContentProvider.COLUMN_TRIGGER_WORD,
-                            AppContentProvider.COLUMN_TRIGGER_WORD_IMAGE_URL};
-
-                    for (String string : tokens) {
-                        Cursor triggerWordsCursor = getContentResolver().query
-                                (AppContentProvider.CONTENT_URI_ENGLISH,
-                                        columns, "UPPER(" + AppContentProvider
-                                                .COLUMN_TRIGGER_WORD + ") =?",
-                                        new String[]{string.toUpperCase()}, null);
-
-                        // If we have results, save the url of that word token and exit loop
-                        // We leave the loop because currently, one word is enough
-                        if (triggerWordsCursor.moveToFirst()) {
-                            triggerWordUrl = triggerWordsCursor.getString(1);
-                            break;
-                        }
-                    }
-
-                    // If we have a url, we can execute a pop up animation
-                    if (triggerWordUrl != null) {
-
-                        // TODO: get this value from preferences or main application
-                        int timeToResetButtonDrawable = 5000;
-
-                        // TODO: Perhaps get transition duration from server as well?
-                        mPopUpButton.onTriggerWordFound(timeToResetButtonDrawable, 500);
-                        mPopUpButton.setOnClickListenerToRootView(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                //TODO: open pop up view animatedly
-                                closeKeyboard(mPopUpButton);
-                                Toast.makeText(PersonMessagesActivity.this, "Pop up clicked... animate view", Toast.LENGTH_LONG).show();
-                            }
-                        });
-
-                    } else {
-                        Log.d("LOGGY", "We have no url");
-                    }
-
-                    // Continue with SMS stuff...
-                    String contact;
-                    MultiAutoCompleteTextView txtPhoneNumber = (MultiAutoCompleteTextView)
-                            findViewById(R.id.txtPhoneNumber);
-
-                    //Send from person messages view
-                    if (txtPhoneNumber.getVisibility() == View.GONE) {
-                        contact = contactMessages.getPhone();
-                    } else {
-                        contact = txtPhoneNumber.getText().toString();
-                    }
+                    examineSMSTextForTriggerWords(tiMessageBody.getText(true));
 
                     //Extract the numbers to send
                     List<String> numbersToSend = extractNumbers(contact);
@@ -463,17 +502,19 @@ public class PersonMessagesActivity extends Activity {
                         setResult(RESULT_OK);
                         finish();
                     } else {
-                        new UpdateList().execute();
                         isMessageSent = true;
+                        new UpdateList().execute();
                     }
+                } else {
+                    Toast.makeText(PersonMessagesActivity.this, "Please enter a number or choose a contact",
+                            Toast.LENGTH_LONG).show();
                 }
-
             }
         });
     }
 
     private void closeKeyboard(View closingView) {
-        InputMethodManager imm = (InputMethodManager)getSystemService(
+        InputMethodManager imm = (InputMethodManager) getSystemService(
                 Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(closingView.getWindowToken(), 0);
     }
@@ -567,22 +608,22 @@ public class PersonMessagesActivity extends Activity {
 
         String[] contacts = input.split(ContactsMap.SEPERATOR);
 
-        for (int i = 0; i < contacts.length; i++) {
-            int startIndex = contacts[i].lastIndexOf("<");
+        for (String contact : contacts) {
+            int startIndex = contact.lastIndexOf("<");
 
-            if (startIndex == -1 && contacts[i].trim().length() > 0) {
-                if (contacts[i].replace("-", "").replace("+", "").matches("[0-9]+"))
-                    numbers.add(contacts[i].trim().replace("-", ""));
+            if (startIndex == -1 && contact.trim().length() > 0) {
+                if (contact.replace("-", "").replace("+", "").matches("[0-9]+"))
+                    numbers.add(contact.trim().replace("-", ""));
                 else
                     throw new InvalidParameterException();
             } else {
-                int endIndex = contacts[i].lastIndexOf(">");
+                int endIndex = contact.lastIndexOf(">");
 
-                if (endIndex == -1 && contacts[i].trim().length() == 0)
+                if (endIndex == -1 && contact.trim().length() == 0)
                     throw new InvalidParameterException();
 
                 else
-                    numbers.add(contacts[i].substring(startIndex + 1, endIndex).trim().replace("-", ""));
+                    numbers.add(contact.substring(startIndex + 1, endIndex).trim().replace("-", ""));
             }
         }
 
