@@ -91,7 +91,7 @@
     </language>
 
     <graphics>
-        <popup_button margin_left="30" margin_bottom="30" on_duration_ms="5000"/>
-
+        <popup_button on_duration_ms="15000" transition_duration="500"/>
     </graphics>
+
 </trigger_words>

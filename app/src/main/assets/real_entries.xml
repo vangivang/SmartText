@@ -862,4 +862,9 @@
             <url>http://smartxt.me/images/Brunch.png</url>
         </entry>
     </language>
+
+    <graphics>
+        <popup_button on_duration_ms="5000" transition_duration="500"/>
+    </graphics>
+
 </trigger_words>

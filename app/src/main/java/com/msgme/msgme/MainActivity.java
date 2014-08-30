@@ -29,7 +29,9 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.msgme.msgme.BaseClasses.BaseActivity;
 import com.msgme.msgme.adapters.ContactMessagesAdapter;
+import com.msgme.msgme.customViews.CustomPopupButton;
 import com.msgme.msgme.database.AppContentProvider;
 import com.msgme.msgme.database.TriggerWordEntity;
 import com.msgme.msgme.storage.SharedPreferencesManager;
@@ -49,7 +51,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class MainActivity extends Activity {
+public class MainActivity extends BaseActivity {
 
     private static final String TAG = "LOGGY1";
 
@@ -664,6 +666,10 @@ public class MainActivity extends Activity {
                     } else if (tagName.equalsIgnoreCase("url")) {
                         url = xmlData.nextText();
                         recordsFound++;
+                    } else if (tagName.equalsIgnoreCase("popup_button")) {
+                        String onDurationMs = xmlData.getAttributeValue(null, "on_duration_ms");
+                        mApp.getPref().edit().putInt(CustomPopupButton.POPUP_ICON_ON_DURATION,
+                                Integer.parseInt(onDurationMs)).commit();
                     }
                 }
 
@@ -700,9 +706,9 @@ public class MainActivity extends Activity {
             Log.d(TAG, "Number of rows deleted-->" + rowsDeleted);
         }
 
-        private void insertDataIntoDatabase(ArrayList<TriggerWordEntity> entities){
+        private void insertDataIntoDatabase(ArrayList<TriggerWordEntity> entities) {
 
-            for (TriggerWordEntity entity : entities){
+            for (TriggerWordEntity entity : entities) {
                 ContentValues contentValues = new ContentValues();
                 contentValues.put(AppContentProvider.COLUMN_COUPON_TEXT, entity.getCouponText());
                 contentValues.put(AppContentProvider.COLUMN_TRIGGER_WORD, entity.getText());
