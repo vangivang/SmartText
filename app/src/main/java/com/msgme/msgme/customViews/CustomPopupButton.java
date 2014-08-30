@@ -57,18 +57,30 @@ public class CustomPopupButton extends RelativeLayout {
     }
 
     public void onTriggerWordFound(final int popupTransitionDuration) {
+
+        // Get TransitionDrawable set in XML
         final TransitionDrawable popupBgTransitionDrawable = (TransitionDrawable) mPopUpButtonBG.getDrawable();
         final TransitionDrawable popupCouponTransitionDrawable = (TransitionDrawable) mPopUpButtonCoupon.getDrawable();
         final ImageView couponButton = (ImageView) getRootView().findViewById(R.id.popupButtonCoupon);
 
+        // Set true cross fade (upper layer will be totally opaque
         popupCouponTransitionDrawable.setCrossFadeEnabled(true);
         popupBgTransitionDrawable.setCrossFadeEnabled(true);
 
+        // Show the button
+        setButtonVisibility(true);
+
+        // Start transition
         popupCouponTransitionDrawable.startTransition(popupTransitionDuration);
         popupBgTransitionDrawable.startTransition(popupTransitionDuration);
 
+        // Start coupon pulse animation
         startPulseAnimation(couponButton);
 
+        // When popup duration finishes + 350ms:
+        // 1. Stop coupon pulse animation
+        // 2. Later, start reverse transition of popup
+        // 3. When all of that is done (750 ms later), call activity to animate list view down
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -80,11 +92,17 @@ public class CustomPopupButton extends RelativeLayout {
                         popupBgTransitionDrawable.reverseTransition(popupTransitionDuration);
                         popupCouponTransitionDrawable.reverseTransition(popupTransitionDuration);
                         mPopUpButtonRootView.setOnClickListener(null);
-                        mOnPopupButtonDurationPassedListener.onPopupButtonDurationPassedEvent();
+
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                mOnPopupButtonDurationPassedListener.onPopupButtonDurationPassedEvent();
+                                setButtonVisibility(false);
+                            }
+                        }, 750);
+
                     }
                 }, 250);
-
-
             }
         }, 350 + mPopupButtonOnDuration);
     }
@@ -108,8 +126,16 @@ public class CustomPopupButton extends RelativeLayout {
         view.clearAnimation();
     }
 
-    public void setOnPopupButtonDurationPassedListener(OnPopupButtonDurationPassedListener listner){
+    public void setOnPopupButtonDurationPassedListener(OnPopupButtonDurationPassedListener listner) {
         mOnPopupButtonDurationPassedListener = listner;
+    }
+
+    private void setButtonVisibility(boolean isVisible) {
+        if (isVisible) {
+            findViewById(R.id.popup_root).setVisibility(VISIBLE);
+        } else {
+            findViewById(R.id.popup_root).setVisibility(INVISIBLE);
+        }
     }
 
 

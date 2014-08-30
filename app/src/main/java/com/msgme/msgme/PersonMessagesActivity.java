@@ -57,7 +57,7 @@ public class PersonMessagesActivity extends BaseActivity {
     public static final int PICK_CONTACT = 0;
     public static final int GET_ICON_FROM_LIST = 1;
     public static final int LIST_VIEW_ANIMATION_DURATION = 500;
-    public static final int LIST_VIEW_TRANSLATION_AMOUNT = 110;
+    public static final int LIST_VIEW_TRANSLATION_AMOUNT = 150;
 
     // TODO: Perhaps get this from server aswell?
     public ContactMessages contactMessages = null;
@@ -424,65 +424,83 @@ public class PersonMessagesActivity extends BaseActivity {
         // single one)
 
         if (!TextUtils.isEmpty(smsMessageBody)) {
-
-            String whiteSpaceTrimmedText = smsMessageBody.replaceAll
-                    ("^\\s+|\\s+$", "");
-
-            // Split the string using these delimiters. Again + denotes consecutive
-            // chars as well not only a single one
-            String delims = "[ .,?!]+";
-            String[] tokens = whiteSpaceTrimmedText.split(delims);
+            String[] tokens = getTokenWordsFromIncomingMessageBody(smsMessageBody);
 
             // For each word token in array, check in data base if there is a
             // corresponding trigger word
-            String triggerWordUrl = null;
-            String[] columns = {AppContentProvider.COLUMN_TRIGGER_WORD,
-                    AppContentProvider.COLUMN_TRIGGER_WORD_IMAGE_URL};
-
-            for (String string : tokens) {
-                Cursor triggerWordsCursor = getContentResolver().query
-                        (AppContentProvider.CONTENT_URI_ENGLISH,
-                                columns, "UPPER(" + AppContentProvider
-                                        .COLUMN_TRIGGER_WORD + ") =?",
-                                new String[]{string.toUpperCase()}, null);
-
-                // If we have results, save the url of that word token and exit loop
-                // We leave the loop because currently, one word is enough
-                if (triggerWordsCursor.moveToFirst()) {
-                    triggerWordUrl = triggerWordsCursor.getString(1);
-                    triggerWordsCursor.close();
-                    break;
-                }
-            }
+            String triggerWordUrl = getFoundTriggerWordImageUrl(tokens);
 
             // If we have a url, we can execute a pop up animation
             if (triggerWordUrl != null) {
-
-                // TODO: Perhaps get transition duration from server as well?
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-//                        closeKeyboard(mPopUpButton);
-                        animate(lvMessagesList).setDuration(LIST_VIEW_ANIMATION_DURATION).translationYBy
-                                (-LIST_VIEW_TRANSLATION_AMOUNT).setInterpolator(new
-                                AccelerateDecelerateInterpolator());
-                        mPopUpButton.onTriggerWordFound(500);
-                    }
-                });
-                mPopUpButton.setOnClickListenerToRootView(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        //TODO: open pop up view animatedly
-                        closeKeyboard(mPopUpButton);
-                        Toast.makeText(PersonMessagesActivity.this, "Pop up clicked... animate view",
-                                Toast.LENGTH_LONG).show();
-                    }
-                });
-
+                activatePopUp();
             } else {
                 Log.d("LOGGY", "We have no url");
             }
         }
+    }
+
+    private void activatePopUp() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+//                        closeKeyboard(mPopUpButton);
+                animate(lvMessagesList).setDuration(LIST_VIEW_ANIMATION_DURATION).translationYBy
+                        (-LIST_VIEW_TRANSLATION_AMOUNT).setInterpolator(new
+                        AccelerateDecelerateInterpolator());
+
+                // TODO: Perhaps get transition duration from server as well?
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        mPopUpButton.onTriggerWordFound(500);
+                    }
+                }, LIST_VIEW_ANIMATION_DURATION + 150);
+            }
+        });
+
+        mPopUpButton.setOnClickListenerToRootView(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO: open pop up view animatedly
+                closeKeyboard(mPopUpButton);
+                Toast.makeText(PersonMessagesActivity.this, "Pop up clicked... animate view",
+                        Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    private String getFoundTriggerWordImageUrl(String[] tokens) {
+
+        String triggerWordUrl = null;
+        String[] columns = {AppContentProvider.COLUMN_TRIGGER_WORD,
+                AppContentProvider.COLUMN_TRIGGER_WORD_IMAGE_URL};
+
+        for (String string : tokens) {
+            Cursor triggerWordsCursor = getContentResolver().query
+                    (AppContentProvider.CONTENT_URI_ENGLISH,
+                            columns, "UPPER(" + AppContentProvider
+                                    .COLUMN_TRIGGER_WORD + ") =?",
+                            new String[]{string.toUpperCase()}, null);
+
+            // If we have results, save the url of that word token and exit loop
+            // We leave the loop because currently, one word is enough
+            if (triggerWordsCursor.moveToFirst()) {
+                triggerWordUrl = triggerWordsCursor.getString(1);
+                triggerWordsCursor.close();
+                break;
+            }
+        }
+        return triggerWordUrl;
+    }
+
+    private String[] getTokenWordsFromIncomingMessageBody(String smsMessageBody) {
+        String whiteSpaceTrimmedText = smsMessageBody.replaceAll
+                ("^\\s+|\\s+$", "");
+
+        // Split the string using these delimiters. Again + denotes consecutive
+        // chars as well not only a single one
+        String delimeterss = "[ .,?!]+";
+        return whiteSpaceTrimmedText.split(delimeterss);
     }
 
     private void setUpSmsSendButtonClickListener() {
