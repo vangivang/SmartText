@@ -1,6 +1,5 @@
 package com.msgme.msgme;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
@@ -29,6 +28,7 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -38,6 +38,7 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.msgme.msgme.BaseClasses.BaseActivity;
 import com.msgme.msgme.adapters.MessagesAdapter;
 import com.msgme.msgme.customViews.CustomPopupButton;
 import com.msgme.msgme.database.AppContentProvider;
@@ -49,10 +50,14 @@ import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PersonMessagesActivity extends Activity {
+import static com.nineoldandroids.view.ViewPropertyAnimator.animate;
+
+public class PersonMessagesActivity extends BaseActivity {
 
     public static final int PICK_CONTACT = 0;
     public static final int GET_ICON_FROM_LIST = 1;
+    public static final int LIST_VIEW_ANIMATION_DURATION = 500;
+    public static final int LIST_VIEW_TRANSLATION_AMOUNT = 110;
 
     // TODO: Perhaps get this from server aswell?
     public ContactMessages contactMessages = null;
@@ -178,6 +183,17 @@ public class PersonMessagesActivity extends Activity {
         fillContactsAutoComplete();
 
         mPopUpButton = (CustomPopupButton) findViewById(R.id.customPopupButton);
+        mPopUpButton.setOnPopupButtonDurationPassedListener(new CustomPopupButton.OnPopupButtonDurationPassedListener
+                () {
+
+
+            @Override
+            public void onPopupButtonDurationPassedEvent() {
+                animate(lvMessagesList).setDuration(LIST_VIEW_ANIMATION_DURATION).translationYBy
+                        (LIST_VIEW_TRANSLATION_AMOUNT).setInterpolator(new
+                        AccelerateDecelerateInterpolator());
+            }
+        });
 
         EditText etMessageBody = (EditText) findViewById(R.id.etMessageBody);
         txtPhoneNo = (MultiAutoCompleteTextView) findViewById(R.id.txtPhoneNumber);
@@ -399,6 +415,7 @@ public class PersonMessagesActivity extends Activity {
 
     /**
      * Will examine whether smsMessageBody contains a trigger word. If it does, it will light up the popup button
+     *
      * @param smsMessageBody The text to examine for a trigger word
      */
     private void examineSMSTextForTriggerWords(String smsMessageBody) {
@@ -441,14 +458,15 @@ public class PersonMessagesActivity extends Activity {
             // If we have a url, we can execute a pop up animation
             if (triggerWordUrl != null) {
 
-                // TODO: get this value from preferences or main application
-                final int timeToResetButtonDrawable = 5000;
-
                 // TODO: Perhaps get transition duration from server as well?
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        mPopUpButton.onTriggerWordFound(timeToResetButtonDrawable, 500);
+//                        closeKeyboard(mPopUpButton);
+                        animate(lvMessagesList).setDuration(LIST_VIEW_ANIMATION_DURATION).translationYBy
+                                (-LIST_VIEW_TRANSLATION_AMOUNT).setInterpolator(new
+                                AccelerateDecelerateInterpolator());
+                        mPopUpButton.onTriggerWordFound(500);
                     }
                 });
                 mPopUpButton.setOnClickListenerToRootView(new View.OnClickListener() {

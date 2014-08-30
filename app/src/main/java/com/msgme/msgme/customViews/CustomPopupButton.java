@@ -11,6 +11,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
+import com.msgme.msgme.MainApplication;
 import com.msgme.msgme.R;
 
 /**
@@ -18,9 +19,18 @@ import com.msgme.msgme.R;
  */
 public class CustomPopupButton extends RelativeLayout {
 
+    public interface OnPopupButtonDurationPassedListener {
+        public void onPopupButtonDurationPassedEvent();
+    }
+
+    public static final String POPUP_ICON_ON_DURATION = "popup_icon_on_duration";
+
+    private OnPopupButtonDurationPassedListener mOnPopupButtonDurationPassedListener;
+
     private ImageView mPopUpButtonBG;
     private ImageView mPopUpButtonCoupon;
     private RelativeLayout mPopUpButtonRootView;
+    private int mPopupButtonOnDuration;
 
     public CustomPopupButton(Context context) {
         super(context);
@@ -38,13 +48,15 @@ public class CustomPopupButton extends RelativeLayout {
         mPopUpButtonBG = (ImageView) view.findViewById(R.id.popupButton);
         mPopUpButtonCoupon = (ImageView) view.findViewById(R.id.popupButtonCoupon);
         mPopUpButtonRootView = (RelativeLayout) view.findViewById(R.id.popup_root);
+        mPopupButtonOnDuration = ((MainApplication) getContext().getApplicationContext()).getPref().getInt
+                (POPUP_ICON_ON_DURATION, 5000);
     }
 
-    public void setOnClickListenerToRootView(View.OnClickListener onClickListener){
+    public void setOnClickListenerToRootView(View.OnClickListener onClickListener) {
         mPopUpButtonRootView.setOnClickListener(onClickListener);
     }
 
-    public void onTriggerWordFound(final int timeToResetButtonDrawable, final int popupTransitionDuration){
+    public void onTriggerWordFound(final int popupTransitionDuration) {
         final TransitionDrawable popupBgTransitionDrawable = (TransitionDrawable) mPopUpButtonBG.getDrawable();
         final TransitionDrawable popupCouponTransitionDrawable = (TransitionDrawable) mPopUpButtonCoupon.getDrawable();
         final ImageView couponButton = (ImageView) getRootView().findViewById(R.id.popupButtonCoupon);
@@ -54,8 +66,6 @@ public class CustomPopupButton extends RelativeLayout {
 
         popupCouponTransitionDrawable.startTransition(popupTransitionDuration);
         popupBgTransitionDrawable.startTransition(popupTransitionDuration);
-
-        //TODO: animate pulsating coupon icon....
 
         startPulseAnimation(couponButton);
 
@@ -70,20 +80,21 @@ public class CustomPopupButton extends RelativeLayout {
                         popupBgTransitionDrawable.reverseTransition(popupTransitionDuration);
                         popupCouponTransitionDrawable.reverseTransition(popupTransitionDuration);
                         mPopUpButtonRootView.setOnClickListener(null);
+                        mOnPopupButtonDurationPassedListener.onPopupButtonDurationPassedEvent();
                     }
                 }, 250);
 
 
             }
-        }, 350 + timeToResetButtonDrawable);
+        }, 350 + mPopupButtonOnDuration);
     }
 
-    public void startPulseAnimation(ImageView view){
+    public void startPulseAnimation(ImageView view) {
         Animation pulse = AnimationUtils.loadAnimation(getContext(), R.anim.pulse_animation_on);
         view.startAnimation(pulse);
     }
 
-    public void stopPulseAnimation(final ImageView view){
+    public void stopPulseAnimation(final ImageView view) {
         final Animation pulse = AnimationUtils.loadAnimation(getContext(), R.anim.pulse_animation_off);
 
         // Stupid android. Needs to post to UI for this animation to work because this method is called from a Handler
@@ -95,6 +106,10 @@ public class CustomPopupButton extends RelativeLayout {
             }
         });
         view.clearAnimation();
+    }
+
+    public void setOnPopupButtonDurationPassedListener(OnPopupButtonDurationPassedListener listner){
+        mOnPopupButtonDurationPassedListener = listner;
     }
 
 
