@@ -127,7 +127,7 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        String[] xmlUrls = {"real_entries.xml"};
+        String[] xmlUrls = {"http://smartxt.me/xml/real_entries.xml"};
 
         ASyncDownloader downloader = new ASyncDownloader(xmlUrls);
         downloader.execute(xmlUrls);
@@ -561,8 +561,8 @@ public class MainActivity extends BaseActivity {
                 String path = params[urlCounter];
 
                 // Set up a XmlPullParser and download data
-                receivedData = readXmlFileFromAssetsFolder(path);
-//                    receivedData = tryDownloadingXmlData(path);
+//                receivedData = readXmlFileFromAssetsFolder(path);
+                    receivedData = tryDownloadingXmlData(path);
 
                 try {
                     processReceivedData(receivedData);
