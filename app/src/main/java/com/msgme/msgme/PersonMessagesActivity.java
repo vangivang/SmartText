@@ -34,6 +34,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.MultiAutoCompleteTextView;
+import android.widget.RelativeLayout;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -377,7 +378,7 @@ public class PersonMessagesActivity extends BaseActivity {
      * Updates the list of message to parse back into view
      *
      * @param isHereAfterMessagesListItemClicked If this is true, we do not need to examine for trigger words because we
-     *                                           only just arrived here. If false,
+     *                                           only just arrived here from Main conversation activity. If false,
      *                                           it means we just received a new message
      *                                           hence, a new word to check as a trigger word
      */
@@ -404,7 +405,7 @@ public class PersonMessagesActivity extends BaseActivity {
 
                 // We have a last message, lets check if its a trigger word
                 bodyOfNewMessage = lastMessageCursor.getString(lastMessageCursor.getColumnIndex("body"));
-                examineSMSTextForTriggerWords(bodyOfNewMessage);
+                examineSMSTextForTriggerWords(bodyOfNewMessage, CustomPopupButton.PopupButtonSide.RIGHT);
             }
             lastMessageCursor.close();
         }
@@ -418,7 +419,7 @@ public class PersonMessagesActivity extends BaseActivity {
      *
      * @param smsMessageBody The text to examine for a trigger word
      */
-    private void examineSMSTextForTriggerWords(String smsMessageBody) {
+    private void examineSMSTextForTriggerWords(String smsMessageBody, CustomPopupButton.PopupButtonSide side) {
         // Get the outgoing text and trim from both ends of the string white spaces.
         // + inside the regex denotes consecutive white spaces as well (not only a
         // single one)
@@ -432,14 +433,14 @@ public class PersonMessagesActivity extends BaseActivity {
 
             // If we have a url, we can execute a pop up animation
             if (triggerWordUrl != null) {
-                activatePopUp();
+                activatePopUp(side);
             } else {
                 Log.d("LOGGY", "We have no url");
             }
         }
     }
 
-    private void activatePopUp() {
+    private void activatePopUp(final CustomPopupButton.PopupButtonSide side) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -452,6 +453,26 @@ public class PersonMessagesActivity extends BaseActivity {
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
+
+                        RelativeLayout.LayoutParams params = null;
+
+                        switch (side) {
+                            case LEFT:
+                                // SHOW LEFT BUTTON
+//                                params = (RelativeLayout.LayoutParams) mPopUpButton.getLayoutParams();
+//                                params.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+                                break;
+                            case RIGHT:
+                                // SHOW RIGHT BUTTON
+//                                params = (RelativeLayout.LayoutParams) mPopUpButton.getLayoutParams();
+//                                params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+                                break;
+                            default:
+                                break;
+
+                        }
+
+//                        mPopUpButton.setLayoutParams(params);
                         mPopUpButton.onTriggerWordFound(500);
                     }
                 }, LIST_VIEW_ANIMATION_DURATION + 150);
@@ -523,7 +544,7 @@ public class PersonMessagesActivity extends BaseActivity {
 
                 if (!TextUtils.isEmpty(contact)) {
 
-                    examineSMSTextForTriggerWords(tiMessageBody.getText(true));
+                    examineSMSTextForTriggerWords(tiMessageBody.getText(true), CustomPopupButton.PopupButtonSide.LEFT);
 
                     //Extract the numbers to send
                     List<String> numbersToSend = extractNumbers(contact);

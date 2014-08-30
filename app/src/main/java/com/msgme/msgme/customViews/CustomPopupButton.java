@@ -19,9 +19,13 @@ import com.msgme.msgme.R;
  */
 public class CustomPopupButton extends RelativeLayout {
 
+    private RelativeLayout mRootView;
+
     public interface OnPopupButtonDurationPassedListener {
         public void onPopupButtonDurationPassedEvent();
     }
+
+    public enum PopupButtonSide{LEFT, RIGHT}
 
     public static final String POPUP_ICON_ON_DURATION = "popup_icon_on_duration";
 
@@ -57,6 +61,41 @@ public class CustomPopupButton extends RelativeLayout {
     }
 
     public void onTriggerWordFound(final int popupTransitionDuration) {
+
+//        switch (side){
+//            case LEFT:
+//                // SHOW BUTTON ON LEFT SIDE
+//                LayoutParams paramsBGLeft = (LayoutParams) mPopUpButtonBG.getLayoutParams();
+//                paramsBGLeft.addRule(ALIGN_PARENT_LEFT);
+////                paramsBGLeft.addRule(ALIGN_PARENT_START);
+//                mPopUpButtonBG.setLayoutParams(paramsBGLeft);
+//
+//                LayoutParams paramsCouponLeft = (LayoutParams) mPopUpButtonCoupon.getLayoutParams();
+//                paramsCouponLeft.addRule(ALIGN_LEFT, R.id.popupButton);
+////                paramsCouponLeft.addRule(ALIGN_START, R.id.popupButton);
+//                paramsCouponLeft.topMargin = 17;
+//                paramsCouponLeft.leftMargin = 14;
+//                mPopUpButtonBG.setLayoutParams(paramsCouponLeft);
+//
+//                break;
+//            case RIGHT:
+//                LayoutParams paramsBGRight = (LayoutParams) mPopUpButtonBG.getLayoutParams();
+//                paramsBGRight.addRule(ALIGN_PARENT_RIGHT);
+//                paramsBGRight.addRule(ALIGN_PARENT_RIGHT);
+//                mPopUpButtonBG.setLayoutParams(paramsBGRight);
+//
+//                LayoutParams paramsCouponRight = (LayoutParams) mPopUpButtonCoupon.getLayoutParams();
+//                paramsCouponRight.addRule(ALIGN_RIGHT, R.id.popupButton);
+//                paramsCouponRight.addRule(ALIGN_RIGHT, R.id.popupButton);
+//                paramsCouponRight.topMargin = 17;
+//                paramsCouponRight.leftMargin = 14;
+//                mPopUpButtonBG.setLayoutParams(paramsCouponRight);
+//
+//                // SHOW BUTTON ON RIGHT SIDE
+//                break;
+//            default:
+//                break;
+//        }
 
         // Get TransitionDrawable set in XML
         final TransitionDrawable popupBgTransitionDrawable = (TransitionDrawable) mPopUpButtonBG.getDrawable();
@@ -132,9 +171,9 @@ public class CustomPopupButton extends RelativeLayout {
 
     private void setButtonVisibility(boolean isVisible) {
         if (isVisible) {
-            findViewById(R.id.popup_root).setVisibility(VISIBLE);
+            mPopUpButtonRootView.setVisibility(VISIBLE);
         } else {
-            findViewById(R.id.popup_root).setVisibility(INVISIBLE);
+            mPopUpButtonRootView.setVisibility(INVISIBLE);
         }
     }
 
