@@ -22,6 +22,7 @@ import android.text.Editable;
 import android.text.SpannedString;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -83,6 +84,7 @@ public class PersonMessagesActivity extends BaseActivity {
     private static int mutex = 0;
 
     private CustomPopupButton mPopUpButton;
+    private CustomPopupButton mPopUpButtonRight;
 
     Handler regularHandler = new Handler(new Handler.Callback() {
 
@@ -184,17 +186,10 @@ public class PersonMessagesActivity extends BaseActivity {
         fillContactsAutoComplete();
 
         mPopUpButton = (CustomPopupButton) findViewById(R.id.customPopupButton);
-        mPopUpButton.setOnPopupButtonDurationPassedListener(new CustomPopupButton.OnPopupButtonDurationPassedListener
-                () {
+        mPopUpButtonRight = (CustomPopupButton) findViewById(R.id.customPopupButton_right);
 
-
-            @Override
-            public void onPopupButtonDurationPassedEvent() {
-                animate(lvMessagesList).setDuration(LIST_VIEW_ANIMATION_DURATION).translationYBy
-                        (LIST_VIEW_TRANSLATION_AMOUNT).setInterpolator(new
-                        AccelerateDecelerateInterpolator());
-            }
-        });
+        mPopUpButton.setOnPopupButtonDurationPassedListener(getPopupDurationPassedListener());
+        mPopUpButtonRight.setOnPopupButtonDurationPassedListener(getPopupDurationPassedListener());
 
         EditText etMessageBody = (EditText) findViewById(R.id.etMessageBody);
         txtPhoneNo = (MultiAutoCompleteTextView) findViewById(R.id.txtPhoneNumber);
@@ -242,6 +237,46 @@ public class PersonMessagesActivity extends BaseActivity {
 
         }
 
+    }
+
+    private CustomPopupButton.OnPopupButtonDurationPassedListener getPopupDurationPassedListener() {
+        return new CustomPopupButton.OnPopupButtonDurationPassedListener() {
+
+            @Override
+            public void onPopupButtonDurationPassedEvent() {
+                animateListViewDown();
+            }
+        };
+    }
+
+    private void animateListViewDown() {
+
+        animate(lvMessagesList).setDuration(LIST_VIEW_ANIMATION_DURATION).translationYBy
+                (getListViewRowHeight()).setInterpolator(new
+                AccelerateDecelerateInterpolator());
+    }
+
+    private void animateListViewUp() {
+
+        animate(lvMessagesList).setDuration(LIST_VIEW_ANIMATION_DURATION).translationYBy
+                (-getListViewRowHeight()).setInterpolator(new
+                AccelerateDecelerateInterpolator());
+    }
+
+    private int getListViewRowHeight() {
+        MessagesAdapter adapter = (MessagesAdapter) lvMessagesList.getAdapter();
+        View view = adapter.getView(adapter.getCount() - 1, null, lvMessagesList);
+        view.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+        return view.getMeasuredHeight() + 26;
+    }
+
+    private int convertPixelsToDP(int pixels) {
+        DisplayMetrics metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        float logicalDensity = metrics.density;
+
+        return 0;
     }
 
 
@@ -445,9 +480,7 @@ public class PersonMessagesActivity extends BaseActivity {
             @Override
             public void run() {
 //                        closeKeyboard(mPopUpButton);
-                animate(lvMessagesList).setDuration(LIST_VIEW_ANIMATION_DURATION).translationYBy
-                        (-LIST_VIEW_TRANSLATION_AMOUNT).setInterpolator(new
-                        AccelerateDecelerateInterpolator());
+                animateListViewUp();
 
                 // TODO: Perhaps get transition duration from server as well?
                 new Handler().postDelayed(new Runnable() {
@@ -458,11 +491,13 @@ public class PersonMessagesActivity extends BaseActivity {
 
                         switch (side) {
                             case LEFT:
+                                mPopUpButton.onTriggerWordFound(500);
                                 // SHOW LEFT BUTTON
 //                                params = (RelativeLayout.LayoutParams) mPopUpButton.getLayoutParams();
 //                                params.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
                                 break;
                             case RIGHT:
+                                mPopUpButtonRight.onTriggerWordFound(500);
                                 // SHOW RIGHT BUTTON
 //                                params = (RelativeLayout.LayoutParams) mPopUpButton.getLayoutParams();
 //                                params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
@@ -473,7 +508,7 @@ public class PersonMessagesActivity extends BaseActivity {
                         }
 
 //                        mPopUpButton.setLayoutParams(params);
-                        mPopUpButton.onTriggerWordFound(500);
+//                        mPopUpButton.onTriggerWordFound(500);
                     }
                 }, LIST_VIEW_ANIMATION_DURATION + 150);
             }
