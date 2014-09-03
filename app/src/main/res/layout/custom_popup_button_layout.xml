@@ -2,16 +2,19 @@
 <RelativeLayout
     android:id="@+id/popup_root"
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+
     android:visibility="invisible"
+    tools:visibility="visible"
     >
 
     <ImageView
         android:id="@+id/popupButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/popup_button_transition"
+        android:src="@drawable/icon_on"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
@@ -22,7 +25,7 @@
         android:id="@+id/popupButtonCoupon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/popup_button_coupon_transition"
+        android:src="@drawable/coupon_on"
         android:layout_alignLeft="@+id/popupButton"
         android:layout_alignStart="@+id/popupButton"
         android:layout_alignTop="@+id/popupButton"

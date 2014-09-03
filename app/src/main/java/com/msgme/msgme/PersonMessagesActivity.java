@@ -482,7 +482,6 @@ public class PersonMessagesActivity extends BaseActivity {
 //                        closeKeyboard(mPopUpButton);
                 animateListViewUp();
 
-                // TODO: Perhaps get transition duration from server as well?
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -491,13 +490,13 @@ public class PersonMessagesActivity extends BaseActivity {
 
                         switch (side) {
                             case LEFT:
-                                mPopUpButton.onTriggerWordFound(500);
+                                mPopUpButton.onTriggerWordFound();
                                 // SHOW LEFT BUTTON
 //                                params = (RelativeLayout.LayoutParams) mPopUpButton.getLayoutParams();
 //                                params.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
                                 break;
                             case RIGHT:
-                                mPopUpButtonRight.onTriggerWordFound(500);
+                                mPopUpButtonRight.onTriggerWordFound();
                                 // SHOW RIGHT BUTTON
 //                                params = (RelativeLayout.LayoutParams) mPopUpButton.getLayoutParams();
 //                                params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);

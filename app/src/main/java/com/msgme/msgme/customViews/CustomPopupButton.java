@@ -1,7 +1,6 @@
 package com.msgme.msgme.customViews;
 
 import android.content.Context;
-import android.graphics.drawable.TransitionDrawable;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -19,20 +18,17 @@ import com.msgme.msgme.R;
  */
 public class CustomPopupButton extends RelativeLayout {
 
-    private RelativeLayout mRootView;
-
     public interface OnPopupButtonDurationPassedListener {
         public void onPopupButtonDurationPassedEvent();
     }
 
-    public enum PopupButtonSide{LEFT, RIGHT}
+    public enum PopupButtonSide {LEFT, RIGHT}
 
     public static final String POPUP_ICON_ON_DURATION = "popup_icon_on_duration";
+    public static final int ROOT_VIEW_FADE_OUT_DURATION = 450;
 
     private OnPopupButtonDurationPassedListener mOnPopupButtonDurationPassedListener;
 
-    private ImageView mPopUpButtonBG;
-    private ImageView mPopUpButtonCoupon;
     private RelativeLayout mPopUpButtonRootView;
     private int mPopupButtonOnDuration;
 
@@ -49,8 +45,6 @@ public class CustomPopupButton extends RelativeLayout {
     private void init() {
         LayoutInflater layoutInflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = layoutInflater.inflate(R.layout.custom_popup_button_layout, this, true);
-        mPopUpButtonBG = (ImageView) view.findViewById(R.id.popupButton);
-        mPopUpButtonCoupon = (ImageView) view.findViewById(R.id.popupButtonCoupon);
         mPopUpButtonRootView = (RelativeLayout) view.findViewById(R.id.popup_root);
         mPopupButtonOnDuration = ((MainApplication) getContext().getApplicationContext()).getPref().getInt
                 (POPUP_ICON_ON_DURATION, 5000);
@@ -60,59 +54,14 @@ public class CustomPopupButton extends RelativeLayout {
         mPopUpButtonRootView.setOnClickListener(onClickListener);
     }
 
-    public void onTriggerWordFound(final int popupTransitionDuration) {
+    public void onTriggerWordFound() {
 
-//        switch (side){
-//            case LEFT:
-//                // SHOW BUTTON ON LEFT SIDE
-//                LayoutParams paramsBGLeft = (LayoutParams) mPopUpButtonBG.getLayoutParams();
-//                paramsBGLeft.addRule(ALIGN_PARENT_LEFT);
-////                paramsBGLeft.addRule(ALIGN_PARENT_START);
-//                mPopUpButtonBG.setLayoutParams(paramsBGLeft);
-//
-//                LayoutParams paramsCouponLeft = (LayoutParams) mPopUpButtonCoupon.getLayoutParams();
-//                paramsCouponLeft.addRule(ALIGN_LEFT, R.id.popupButton);
-////                paramsCouponLeft.addRule(ALIGN_START, R.id.popupButton);
-//                paramsCouponLeft.topMargin = 17;
-//                paramsCouponLeft.leftMargin = 14;
-//                mPopUpButtonBG.setLayoutParams(paramsCouponLeft);
-//
-//                break;
-//            case RIGHT:
-//                LayoutParams paramsBGRight = (LayoutParams) mPopUpButtonBG.getLayoutParams();
-//                paramsBGRight.addRule(ALIGN_PARENT_RIGHT);
-//                paramsBGRight.addRule(ALIGN_PARENT_RIGHT);
-//                mPopUpButtonBG.setLayoutParams(paramsBGRight);
-//
-//                LayoutParams paramsCouponRight = (LayoutParams) mPopUpButtonCoupon.getLayoutParams();
-//                paramsCouponRight.addRule(ALIGN_RIGHT, R.id.popupButton);
-//                paramsCouponRight.addRule(ALIGN_RIGHT, R.id.popupButton);
-//                paramsCouponRight.topMargin = 17;
-//                paramsCouponRight.leftMargin = 14;
-//                mPopUpButtonBG.setLayoutParams(paramsCouponRight);
-//
-//                // SHOW BUTTON ON RIGHT SIDE
-//                break;
-//            default:
-//                break;
-//        }
-
-        // Get TransitionDrawable set in XML
-        final TransitionDrawable popupBgTransitionDrawable = (TransitionDrawable) mPopUpButtonBG.getDrawable();
-        final TransitionDrawable popupCouponTransitionDrawable = (TransitionDrawable) mPopUpButtonCoupon.getDrawable();
         final ImageView couponButton = (ImageView) getRootView().findViewById(R.id.popupButtonCoupon);
-
-        // Set true cross fade (upper layer will be totally opaque
-        popupCouponTransitionDrawable.setCrossFadeEnabled(true);
-        popupBgTransitionDrawable.setCrossFadeEnabled(true);
 
         // Show the button
         setButtonVisibility(true);
 
         // Start transition
-        popupCouponTransitionDrawable.startTransition(popupTransitionDuration);
-        popupBgTransitionDrawable.startTransition(popupTransitionDuration);
-
         // Start coupon pulse animation
         startPulseAnimation(couponButton);
 
@@ -123,25 +72,23 @@ public class CustomPopupButton extends RelativeLayout {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                stopPulseAnimation(couponButton);
+                stopPulseAnimation(couponButton); // 400 ms
 
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        popupBgTransitionDrawable.reverseTransition(popupTransitionDuration);
-                        popupCouponTransitionDrawable.reverseTransition(popupTransitionDuration);
-                        mPopUpButtonRootView.setOnClickListener(null);
+
+                        setButtonVisibility(false);
 
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
+                                mPopUpButtonRootView.setOnClickListener(null);
                                 mOnPopupButtonDurationPassedListener.onPopupButtonDurationPassedEvent();
-                                setButtonVisibility(false);
                             }
-                        }, 750);
-
+                        }, ROOT_VIEW_FADE_OUT_DURATION);
                     }
-                }, 250);
+                }, 400);
             }
         }, 350 + mPopupButtonOnDuration);
     }
@@ -170,10 +117,19 @@ public class CustomPopupButton extends RelativeLayout {
     }
 
     private void setButtonVisibility(boolean isVisible) {
+        final Animation fadeInAnim = AnimationUtils.loadAnimation(getContext(), R.anim.fade_in);
+
         if (isVisible) {
-            mPopUpButtonRootView.setVisibility(VISIBLE);
+            mPopUpButtonRootView.post(new Runnable() {
+                @Override
+                public void run() {
+                    mPopUpButtonRootView.setVisibility(VISIBLE);
+                    com.nineoldandroids.view.ViewPropertyAnimator.animate(mPopUpButtonRootView).setDuration(ROOT_VIEW_FADE_OUT_DURATION).alpha(1.0f);
+//                    mPopUpButtonRootView.setAnimation(fadeInAnim);
+                }
+            });
         } else {
-            mPopUpButtonRootView.setVisibility(INVISIBLE);
+            com.nineoldandroids.view.ViewPropertyAnimator.animate(mPopUpButtonRootView).setDuration(ROOT_VIEW_FADE_OUT_DURATION).alpha(0.0f);
         }
     }
 
