@@ -47,9 +47,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends BaseActivity {
 
@@ -562,7 +566,7 @@ public class MainActivity extends BaseActivity {
 
                 // Set up a XmlPullParser and download data
 //                receivedData = readXmlFileFromAssetsFolder(path);
-                    receivedData = tryDownloadingXmlData(path);
+                receivedData = tryDownloadingXmlData(path);
 
                 try {
                     processReceivedData(receivedData);
@@ -674,7 +678,7 @@ public class MainActivity extends BaseActivity {
                 }
 
                 // If we have 3 records found, it means the xml produced 1 text + 1 url + 1 coupon text... so lets
-                // insert into DB
+                // insert a new trigger entity into Array
                 if (recordsFound == 3) {
                     mWordEntities.add(new TriggerWordEntity(language, couponText, text, url));
                     if (couponInserted) {
@@ -693,12 +697,15 @@ public class MainActivity extends BaseActivity {
 
                 eventType = xmlData.next();
             }
-        }
 
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
+
+            // Done, now insert into db
+            long startTime = System.nanoTime();
             insertDataIntoDatabase(mWordEntities);
+            long estimatedTime = System.nanoTime() - startTime;
+
+            int ellapsed = (int) (estimatedTime / 1000) % 60;
+            Log.d("LOGGY3", "DB insertion ellapsed time:: " + ellapsed + " seconds");
         }
 
         private void deleteTablesData() {
@@ -707,6 +714,7 @@ public class MainActivity extends BaseActivity {
         }
 
         private void insertDataIntoDatabase(ArrayList<TriggerWordEntity> entities) {
+
 
             for (TriggerWordEntity entity : entities) {
                 ContentValues contentValues = new ContentValues();
