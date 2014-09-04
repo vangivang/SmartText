@@ -83,7 +83,7 @@ public class PersonMessagesActivity extends BaseActivity {
     public Boolean isRefreshIsNeeded = false;
     private static int mutex = 0;
 
-    private CustomPopupButton mPopUpButton;
+    private CustomPopupButton mPopUpButtonLeft;
     private CustomPopupButton mPopUpButtonRight;
 
     Handler regularHandler = new Handler(new Handler.Callback() {
@@ -185,10 +185,10 @@ public class PersonMessagesActivity extends BaseActivity {
 
         fillContactsAutoComplete();
 
-        mPopUpButton = (CustomPopupButton) findViewById(R.id.customPopupButton);
+        mPopUpButtonLeft = (CustomPopupButton) findViewById(R.id.customPopupButtonLeft);
         mPopUpButtonRight = (CustomPopupButton) findViewById(R.id.customPopupButton_right);
 
-        mPopUpButton.setOnPopupButtonDurationPassedListener(getPopupDurationPassedListener());
+        mPopUpButtonLeft.setOnPopupButtonDurationPassedListener(getPopupDurationPassedListener());
         mPopUpButtonRight.setOnPopupButtonDurationPassedListener(getPopupDurationPassedListener());
 
         EditText etMessageBody = (EditText) findViewById(R.id.etMessageBody);
@@ -479,7 +479,7 @@ public class PersonMessagesActivity extends BaseActivity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-//                        closeKeyboard(mPopUpButton);
+//                        closeKeyboard(mPopUpButtonLeft);
                 animateListViewUp();
 
                 new Handler().postDelayed(new Runnable() {
@@ -490,34 +490,26 @@ public class PersonMessagesActivity extends BaseActivity {
 
                         switch (side) {
                             case LEFT:
-                                mPopUpButton.onTriggerWordFound();
-                                // SHOW LEFT BUTTON
-//                                params = (RelativeLayout.LayoutParams) mPopUpButton.getLayoutParams();
-//                                params.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+                                mPopUpButtonLeft.onTriggerWordFound();
                                 break;
                             case RIGHT:
                                 mPopUpButtonRight.onTriggerWordFound();
-                                // SHOW RIGHT BUTTON
-//                                params = (RelativeLayout.LayoutParams) mPopUpButton.getLayoutParams();
-//                                params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
                                 break;
                             default:
                                 break;
 
                         }
 
-//                        mPopUpButton.setLayoutParams(params);
-//                        mPopUpButton.onTriggerWordFound(500);
                     }
                 }, LIST_VIEW_ANIMATION_DURATION + 150);
             }
         });
 
-        mPopUpButton.setOnClickListenerToRootView(new View.OnClickListener() {
+        mPopUpButtonLeft.setOnClickListenerToRootView(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //TODO: open pop up view animatedly
-                closeKeyboard(mPopUpButton);
+                closeKeyboard(mPopUpButtonLeft);
                 Toast.makeText(PersonMessagesActivity.this, "Pop up clicked... animate view",
                         Toast.LENGTH_LONG).show();
             }

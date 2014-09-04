@@ -18,9 +18,7 @@ import com.msgme.msgme.R;
  */
 public class CustomPopupButton extends RelativeLayout {
 
-    public interface OnPopupButtonDurationPassedListener {
-        public void onPopupButtonDurationPassedEvent();
-    }
+    private ImageView mCouponIcon;
 
     public enum PopupButtonSide {LEFT, RIGHT}
 
@@ -31,6 +29,10 @@ public class CustomPopupButton extends RelativeLayout {
 
     private RelativeLayout mPopUpButtonRootView;
     private int mPopupButtonOnDuration;
+
+    public interface OnPopupButtonDurationPassedListener {
+        public void onPopupButtonDurationPassedEvent();
+    }
 
     public CustomPopupButton(Context context) {
         super(context);
@@ -46,6 +48,7 @@ public class CustomPopupButton extends RelativeLayout {
         LayoutInflater layoutInflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = layoutInflater.inflate(R.layout.custom_popup_button_layout, this, true);
         mPopUpButtonRootView = (RelativeLayout) view.findViewById(R.id.popup_root);
+        mCouponIcon = (ImageView) getRootView().findViewById(R.id.popupButtonCoupon);
         mPopupButtonOnDuration = ((MainApplication) getContext().getApplicationContext()).getPref().getInt
                 (POPUP_ICON_ON_DURATION, 5000);
     }
@@ -56,14 +59,12 @@ public class CustomPopupButton extends RelativeLayout {
 
     public void onTriggerWordFound() {
 
-        final ImageView couponButton = (ImageView) getRootView().findViewById(R.id.popupButtonCoupon);
-
         // Show the button
         setButtonVisibility(true);
 
         // Start transition
         // Start coupon pulse animation
-        startPulseAnimation(couponButton);
+        startPulseAnimation(mCouponIcon);
 
         // When popup duration finishes + 350ms:
         // 1. Stop coupon pulse animation
@@ -72,7 +73,7 @@ public class CustomPopupButton extends RelativeLayout {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                stopPulseAnimation(couponButton); // 400 ms
+                stopPulseAnimation(mCouponIcon); // 400 ms
 
                 new Handler().postDelayed(new Runnable() {
                     @Override
@@ -93,9 +94,20 @@ public class CustomPopupButton extends RelativeLayout {
         }, 350 + mPopupButtonOnDuration);
     }
 
-    public void startPulseAnimation(ImageView view) {
-        Animation pulse = AnimationUtils.loadAnimation(getContext(), R.anim.pulse_animation_on);
+    public void startPulseAnimation(final ImageView view) {
+
+//        com.nineoldandroids.view.ViewPropertyAnimator.animate(view).scaleX(2.05f).setDuration(400);
+
+        final Animation pulse = AnimationUtils.loadAnimation(getContext(), R.anim.pulse_animation_on);
         view.startAnimation(pulse);
+
+//        view.post(new Runnable() {
+//            @Override
+//            public void run() {
+//                view.startAnimation(pulse);
+//
+//            }
+//        });
     }
 
     public void stopPulseAnimation(final ImageView view) {
@@ -124,12 +136,14 @@ public class CustomPopupButton extends RelativeLayout {
                 @Override
                 public void run() {
                     mPopUpButtonRootView.setVisibility(VISIBLE);
-                    com.nineoldandroids.view.ViewPropertyAnimator.animate(mPopUpButtonRootView).setDuration(ROOT_VIEW_FADE_OUT_DURATION).alpha(1.0f);
+                    com.nineoldandroids.view.ViewPropertyAnimator.animate(mPopUpButtonRootView).setDuration
+                            (ROOT_VIEW_FADE_OUT_DURATION).alpha(1.0f);
 //                    mPopUpButtonRootView.setAnimation(fadeInAnim);
                 }
             });
         } else {
-            com.nineoldandroids.view.ViewPropertyAnimator.animate(mPopUpButtonRootView).setDuration(ROOT_VIEW_FADE_OUT_DURATION).alpha(0.0f);
+            com.nineoldandroids.view.ViewPropertyAnimator.animate(mPopUpButtonRootView).setDuration
+                    (ROOT_VIEW_FADE_OUT_DURATION).alpha(0.0f);
         }
     }
 
