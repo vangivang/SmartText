@@ -133,6 +133,15 @@ public class MainActivity extends BaseActivity {
 
         String[] xmlUrls = {"http://smartxt.me/xml/real_entries.xml"};
 
+
+        //TODO: check for network connection and handle both cases
+        // If we have network, use asynctask
+        // else check if db exists and delete if it does
+        // then load from default file into db
+        // setup broadcast receiver if connection is back on line,
+        // delete db, parse into db xml from server
+        // update file with new xml
+
         ASyncDownloader downloader = new ASyncDownloader(xmlUrls);
         downloader.execute(xmlUrls);
 
