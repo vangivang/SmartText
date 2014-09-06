@@ -35,6 +35,7 @@ import com.msgme.msgme.customViews.CustomPopupButton;
 import com.msgme.msgme.database.AppContentProvider;
 import com.msgme.msgme.database.TriggerWordEntity;
 import com.msgme.msgme.storage.SharedPreferencesManager;
+import com.msgme.msgme.utils.Tools;
 import com.msgme.msgme.vo.ContactMessages;
 import com.msgme.msgme.vo.Message;
 
@@ -42,26 +43,27 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends BaseActivity {
 
     private static final String TAG = "LOGGY1";
 
-    private static final String SERVER_URL = "http://www..com/";
-    private static final String XML_FILE = "filename.xml";
-    private static final String QUERY_URL = SERVER_URL + XML_FILE;
+    private static final String SERVER_URL = "http://smartxt.me/xml/";
+    public static final String XML_FILE_NAME = "real_entries.xml";
+    private static final String QUERY_URL = SERVER_URL + XML_FILE_NAME;
+    private static final String FIRST_RUN_DB_INIT = "first_run_db_init";
 
     //Holds the conversations
     public ContactMessagesAdapter adapter = null;
@@ -86,6 +88,7 @@ public class MainActivity extends BaseActivity {
     private static final int TIME_TO_WAIT = 5000;
 
     public Boolean isRefreshIsNeeded = true;
+    private boolean mIsFirstDbInit = true;
     private String lastConversationMessage = null;
 
     private Context context = this;
@@ -131,8 +134,7 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        String[] xmlUrls = {"http://smartxt.me/xml/real_entries.xml"};
-
+        String[] xmlUrls = {QUERY_URL};
 
         //TODO: check for network connection and handle both cases
         // If we have network, use asynctask
@@ -562,6 +564,7 @@ public class MainActivity extends BaseActivity {
 
             mUrls = urls;
             mWordEntities = new ArrayList<TriggerWordEntity>();
+            mIsFirstDbInit = mApp.getPref().getBoolean(FIRST_RUN_DB_INIT, true);
         }
 
         @Override
@@ -573,9 +576,27 @@ public class MainActivity extends BaseActivity {
             while (urlCounter < mUrls.length) {
                 String path = params[urlCounter];
 
-                // Set up a XmlPullParser and download data
-//                receivedData = readXmlFileFromAssetsFolder(path);
-                receivedData = tryDownloadingXmlData(path);
+                if (Tools.isNetworkAvailable(MainActivity.this)) {
+
+                    // We have network so get the file from server and save it to inner storage
+                    tryDownloadingXmlData(path);
+                } else {
+
+                    // No network, so check if this is first time we init DB
+                    if (mIsFirstDbInit) {
+
+                        // First time, so we copy the file from assets into inner storage first
+                        copyXmlFromAssetsFolderToInnerStorage(XML_FILE_NAME);
+                    }
+                }
+
+                // Either way we load the xml, server or assets, hear we actually get the data
+                receivedData = readXmlFileFromInternalStorage(XML_FILE_NAME);
+
+                // At this point if received data is null, we will force it to load from assets folder
+                if (receivedData == null){
+                    receivedData = readXmlFileFromAssetsFolder(XML_FILE_NAME);
+                }
 
                 try {
                     processReceivedData(receivedData);
@@ -591,13 +612,28 @@ public class MainActivity extends BaseActivity {
             return null;
         }
 
+        private void copyXmlFromAssetsFolderToInnerStorage(String fileName) {
+            try {
+                InputStream is = getAssets().open(fileName);
+                saveXmlToInnerStorage(is, XML_FILE_NAME);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                Log.e(TAG, "IOException in readXmlFileFromAssetsFolder", e);
+            }
+
+        }
+
         private XmlPullParser readXmlFileFromAssetsFolder(String fileName) {
             try {
                 InputStream is = getAssets().open(fileName);
-                XmlPullParser recievdData = XmlPullParserFactory.newInstance().newPullParser();
-                recievdData.setInput(is, null);
 
-                return recievdData;
+                // Save to internal storage to try loading it from there next time
+                saveXmlToInnerStorage(is, XML_FILE_NAME);
+                XmlPullParser receivedData = XmlPullParserFactory.newInstance().newPullParser();
+                receivedData.setInput(is, null);
+
+                return receivedData;
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -610,24 +646,48 @@ public class MainActivity extends BaseActivity {
             return null;
         }
 
-        private XmlPullParser tryDownloadingXmlData(String url) {
+        private void tryDownloadingXmlData(String url) {
 
+            InputStream inputStream;
+            URL xmlUrl;
             try {
 
-                URL xmlUrl = new URL(url);
-                XmlPullParser receivdData = XmlPullParserFactory.newInstance().newPullParser();
-                receivdData.setInput(xmlUrl.openStream(), null);
-                return receivdData;
+                xmlUrl = new URL(url);
+                inputStream = xmlUrl.openStream();
+                saveXmlToInnerStorage(inputStream, XML_FILE_NAME);
 
             } catch (MalformedURLException e) {
-                Log.e(TAG, "MalformedURLExceptio in tryDownloadingXmlData", e);
-            } catch (XmlPullParserException e) {
-                Log.e(TAG, "XmlPullParserException in tryDownloadingXmlData", e);
+                Log.e(TAG, "MalformedURLException in tryDownloadingXmlData", e);
             } catch (IOException e) {
                 Log.e(TAG, "IOException in tryDownloadingXmlData", e);
             }
+        }
 
-            return null;
+        private void saveXmlToInnerStorage(InputStream inputStream, String fileName) throws IOException {
+            FileOutputStream outputStream = openFileOutput(fileName, Context.MODE_PRIVATE);
+            byte[] saveData = readBytes(inputStream);
+            outputStream.write(saveData);
+            outputStream.close();
+
+            mApp.getPref().edit().putBoolean(FIRST_RUN_DB_INIT, false).commit();
+        }
+
+        private XmlPullParser readXmlFileFromInternalStorage(String fileName) {
+
+            XmlPullParser receivedData = null;
+
+            try {
+                receivedData = XmlPullParserFactory.newInstance().newPullParser();
+                FileInputStream inputStream = openFileInput(fileName);
+                receivedData.setInput(inputStream, null);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (XmlPullParserException e) {
+                e.printStackTrace();
+            }
+
+
+            return receivedData;
         }
 
         private void processReceivedData(XmlPullParser xmlData) throws XmlPullParserException, IOException {
@@ -756,6 +816,24 @@ public class MainActivity extends BaseActivity {
         private boolean doesDatabaseExist(ContextWrapper context, String dbName) {
             File dbFile = context.getDatabasePath(dbName);
             return dbFile.exists();
+        }
+
+        public byte[] readBytes(InputStream inputStream) throws IOException {
+            // this dynamically extends to take the bytes you read
+            ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
+
+            // this is storage overwritten on each iteration with bytes
+            int bufferSize = 1024;
+            byte[] buffer = new byte[bufferSize];
+
+            // we need to know how may bytes were read to write them to the byteBuffer
+            int len = 0;
+            while ((len = inputStream.read(buffer)) != -1) {
+                byteBuffer.write(buffer, 0, len);
+            }
+
+            // and then we can return your byte array.
+            return byteBuffer.toByteArray();
         }
     }
 
