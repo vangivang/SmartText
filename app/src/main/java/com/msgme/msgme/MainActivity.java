@@ -92,7 +92,6 @@ public class MainActivity extends BaseActivity {
     private String lastConversationMessage = null;
 
     private Context context = this;
-//    private MyDataBase mDataBase;
 
     private static int mutex = 0;
     Handler regularHandler = new Handler(new Handler.Callback() {
