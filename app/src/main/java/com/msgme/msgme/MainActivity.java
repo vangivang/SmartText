@@ -657,8 +657,8 @@ public class MainActivity extends BaseActivity {
                         couponInserted = false;
                         recordsFound = 0;
                     } else if (tagName.equalsIgnoreCase("coupon")) {
-
                         int subEventType = xmlData.getEventType();
+
                         while (subEventType != XmlPullParser.END_TAG) {
                             String subName = xmlData.getName();
 
@@ -669,7 +669,6 @@ public class MainActivity extends BaseActivity {
                                     recordsFound++;
                                 }
                             }
-
                             subEventType = xmlData.next();
                         }
 
