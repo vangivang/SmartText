@@ -36,12 +36,16 @@ public class CustomPopupButton extends RelativeLayout {
 
     public CustomPopupButton(Context context) {
         super(context);
-        init();
+        if(!isInEditMode()){
+            init();
+        }
     }
 
     public CustomPopupButton(Context context, AttributeSet attrs) {
         super(context, attrs);
-        init();
+        if(!isInEditMode()) {
+            init();
+        }
     }
 
     private void init() {

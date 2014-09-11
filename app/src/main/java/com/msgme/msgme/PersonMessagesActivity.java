@@ -30,6 +30,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.AlphaAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -245,6 +246,7 @@ public class PersonMessagesActivity extends BaseActivity {
             @Override
             public void onPopupButtonDurationPassedEvent() {
                 animateListViewDown();
+                lightenScreen();
             }
         };
     }
@@ -510,10 +512,38 @@ public class PersonMessagesActivity extends BaseActivity {
             public void onClick(View v) {
                 //TODO: open pop up view animatedly
                 closeKeyboard(mPopUpButtonLeft);
+
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Wait.. now darken screen...
+                        darkenScreen();
+                        // Que in pop up animation
+                    }
+                }, 200);
                 Toast.makeText(PersonMessagesActivity.this, "Pop up clicked... animate view",
                         Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    private void darkenScreen() {
+        View blackCurtain = findViewById(R.id.black_curtain);
+        blackCurtain.setVisibility(View.VISIBLE);
+        AlphaAnimation alphaAnimation = new AlphaAnimation(0, 0.5f);
+        alphaAnimation.setDuration(500);
+        alphaAnimation.setFillAfter(true);
+        blackCurtain.startAnimation(alphaAnimation);
+
+    }
+
+    private void lightenScreen() {
+        View blackCurtain = findViewById(R.id.black_curtain);
+        AlphaAnimation alphaAnimation = new AlphaAnimation(0.5f, 0);
+        alphaAnimation.setDuration(500);
+        alphaAnimation.setFillAfter(true);
+        blackCurtain.setVisibility(View.INVISIBLE);
+        blackCurtain.startAnimation(alphaAnimation);
     }
 
     private String getFoundTriggerWordImageUrl(String[] tokens) {
