@@ -260,7 +260,7 @@ public class PersonMessagesActivity extends BaseActivity {
                         mPopUpButtonRight.setButtonVisibility(false);
                     }
 
-                    delayedListAnimation();
+                    delayedListDownAnimation(ANIMATE_LIST_DELAY_MILLIS);
 
                 }
             }
@@ -545,7 +545,7 @@ public class PersonMessagesActivity extends BaseActivity {
                                 mIsPopupVisible = false;
                                 mPopUpButtonLeft.setButtonVisibility(false);
                                 lightenScreen();
-                                delayedListAnimation();
+                                delayedListDownAnimation(ANIMATE_LIST_DELAY_MILLIS);
                             }
                         });
 
@@ -572,17 +572,16 @@ public class PersonMessagesActivity extends BaseActivity {
         });
     }
 
-    private void delayedListAnimation(){
+    private void delayedListDownAnimation(long delay){
 
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 animateListViewDown();
-
             }
            // We need to wait until pop up button fades out (450ms)
            // set in CustomPopupButton.setButtonVisibility();
-        }, ANIMATE_LIST_DELAY_MILLIS);
+        }, delay);
     }
 
     private void darkenScreen() {
@@ -606,7 +605,7 @@ public class PersonMessagesActivity extends BaseActivity {
 
     private String[] getFoundTriggerWordImageUrl(String[] tokens) {
 
-        String[] triggerWordData = new String[2];
+        String[] triggerWordData = new String[3];
 
         String[] columns = {AppContentProvider.COLUMN_COUPON_TEXT,
                 AppContentProvider.COLUMN_TRIGGER_WORD_IMAGE_URL
@@ -630,6 +629,10 @@ public class PersonMessagesActivity extends BaseActivity {
 
                 // Save coupon image URL
                 triggerWordData[1] = triggerWordsCursor.getString(1);
+
+                // Save coupon trigger word
+                triggerWordData[2] = string;
+
                 triggerWordsCursor.close();
                 break;
             }
@@ -672,9 +675,9 @@ public class PersonMessagesActivity extends BaseActivity {
                     //Extract the numbers to send
                     List<String> numbersToSend = extractNumbers(contact);
 
-                    String messageTosend = tiMessageBody.getText(true);
-                    for (int i = 0; i < numbersToSend.size(); i++) {
-                        sendSMS(numbersToSend.get(i), messageTosend);
+                    String messageToSend = tiMessageBody.getText(true);
+                    for (String aNumbersToSend : numbersToSend) {
+                        sendSMS(aNumbersToSend, messageToSend);
                     }
                     tiMessageBody.init();
 

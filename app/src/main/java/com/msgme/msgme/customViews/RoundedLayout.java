@@ -106,7 +106,9 @@ public class RoundedLayout extends RelativeLayout implements View.OnClickListene
                     @Override
                     public void onAnimationEnd(Animation animation) {
                         mCouponText.setVisibility(VISIBLE);
-                        mCouponText.setText(triggerWordData[0]);
+                        String couponText = triggerWordData[0];
+
+                        mCouponText.setText(couponText.replace("x", triggerWordData[2]));
                         animationControl(ViewItems.COUPON_TEXT, mCouponText, HEADER_FOOTER_ANIM_DURATION, null);
                     }
 
