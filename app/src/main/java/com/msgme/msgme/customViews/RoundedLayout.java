@@ -1,6 +1,7 @@
 package com.msgme.msgme.customViews;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,18 +9,27 @@ import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Transformation;
 import android.view.animation.TranslateAnimation;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.msgme.msgme.R;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.assist.SimpleImageLoadingListener;
 
 /**
  * Created by alonm on 9/11/14.
  */
 public class RoundedLayout extends RelativeLayout {
 
+
+    private View mInflatedView;
+
+    private enum ViewItems{HEADER, FOOTER, COUPON_TEXT, COUPON_IMAGE}
+
     public static final int HEADER_FOOTER_ANIM_DURATION = 350;
     private View mHeaderView;
     private View mFooterView;
+    private View mCouponText;
 
     public RoundedLayout(Context context) {
         super(context);
@@ -50,62 +60,84 @@ public class RoundedLayout extends RelativeLayout {
 
     private void init() {
         LayoutInflater layoutInflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view = layoutInflater.inflate(R.layout.custom_rounded_layout, this, true);
-        mHeaderView = view.findViewById(R.id.header);
-        mFooterView = view.findViewById(R.id.footer);
+        mInflatedView = layoutInflater.inflate(R.layout.custom_rounded_layout, this, true);
+        mHeaderView = mInflatedView.findViewById(R.id.header);
+        mFooterView = mInflatedView.findViewById(R.id.footer);
+        mCouponText = mInflatedView.findViewById(R.id.coupon_text);
     }
 
     public void animateView(){
 
-//        float rootX = this.getX();
-//        float rootY = this.getY();
-//        int width = this.getWidth();
-//        int height= this.getHeight();
-//
-//        mHeaderView.setY(rootY - mHeaderView.getHeight());
-//        com.nineoldandroids.view.ViewPropertyAnimator.animate(mHeaderView).translationYBy(mHeaderView.getHeight()).setDuration(1000);
+        animateCouponImage();
+        animationControl(ViewItems.HEADER, mHeaderView, HEADER_FOOTER_ANIM_DURATION, null);
+        animationControl(ViewItems.FOOTER, mFooterView, HEADER_FOOTER_ANIM_DURATION, new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
 
-        animateHeader();
-        animateFooter();
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                mCouponText.setVisibility(VISIBLE);
+                animationControl(ViewItems.COUPON_TEXT, mCouponText, HEADER_FOOTER_ANIM_DURATION, null);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
     }
 
-    private void animateHeader() {
-        Animation moveDownAnim = new TranslateAnimation(getContext(), null){
+    private void animateCouponImage() {
+        final ImageView couponImage = (ImageView) mInflatedView.findViewById(R.id.coupon_image);
+        ImageLoader.getInstance().displayImage("http://smartxt.me/images/Dinner.png", couponImage, new SimpleImageLoadingListener(){
+            @Override
+            public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
+                super.onLoadingComplete(imageUri, view, loadedImage);
+                couponImage.setVisibility(VISIBLE);
+            }
+        });
+    }
 
-            MarginLayoutParams params = (MarginLayoutParams) mHeaderView.getLayoutParams();
-            int topMargin = params.topMargin;
+    private void animationControl(final ViewItems itemToAnimate, final View viewToAnimate, long animationDuration, Animation.AnimationListener animationListener){
+
+        final MarginLayoutParams params = (MarginLayoutParams) viewToAnimate.getLayoutParams();
+        final int topMargin = params.topMargin;
+        final int bottomMargin = params.bottomMargin;
+
+        Animation appliedAnimation = new TranslateAnimation(getContext(), null){
 
             @Override
             protected void applyTransformation(float interpolatedTime, Transformation t) {
-                params.setMargins(0, (int) (topMargin * (1 - interpolatedTime)), 0, 0);
-                mHeaderView.requestLayout();
+
+                switch (itemToAnimate){
+                    case HEADER:
+                        params.setMargins(0, (int) (topMargin * (1 - interpolatedTime)), 0, 0);
+                        viewToAnimate.requestLayout();
+                        break;
+                    case FOOTER:
+                        params.setMargins(0, 0, 0, (int) (bottomMargin * (1 - interpolatedTime)));
+                        viewToAnimate.requestLayout();
+                        break;
+                    case COUPON_TEXT:
+                        params.setMargins(0, (int) (topMargin * (1 - interpolatedTime)), 0, 0);
+                        mCouponText.requestLayout();
+                        break;
+                    case COUPON_IMAGE:
+                        break;
+                }
             }
         };
 
-        moveDownAnim.setDuration(HEADER_FOOTER_ANIM_DURATION);
-        moveDownAnim.setFillAfter(true);
-        moveDownAnim.setInterpolator(new DecelerateInterpolator());
-        mHeaderView.startAnimation(moveDownAnim);
+        if (animationListener != null){
+            appliedAnimation.setAnimationListener(animationListener);
+        }
+
+        appliedAnimation.setDuration(animationDuration);
+        appliedAnimation.setFillAfter(true);
+        appliedAnimation.setInterpolator(new DecelerateInterpolator());
+
+        viewToAnimate.startAnimation(appliedAnimation);
     }
-
-    private void animateFooter() {
-        Animation moveUpAnim = new TranslateAnimation(getContext(), null){
-
-            MarginLayoutParams params = (MarginLayoutParams) mFooterView.getLayoutParams();
-            int bottomMargin = params.bottomMargin;
-
-            @Override
-            protected void applyTransformation(float interpolatedTime, Transformation t) {
-                params.setMargins(0, 0, 0, (int) (bottomMargin * (1 - interpolatedTime)));
-                mFooterView.requestLayout();
-            }
-        };
-
-        moveUpAnim.setDuration(HEADER_FOOTER_ANIM_DURATION);
-        moveUpAnim.setFillAfter(true);
-        moveUpAnim.setInterpolator(new DecelerateInterpolator());
-        mFooterView.startAnimation(moveUpAnim);
-    }
-
-
 }

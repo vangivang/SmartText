@@ -47,6 +47,8 @@
         android:layout_height="100dp"
         android:background="@color/black"
         android:layout_marginTop="55dp"
+        android:scaleType="centerCrop"
+        android:visibility="invisible"
         android:contentDescription="pop_up_image"/>
 
     <TextView
@@ -54,9 +56,15 @@
         android:layout_width="match_parent"
         android:layout_height="100dp"
         android:layout_below="@+id/coupon_image"
+        android:text="Would you like a coupon\nfor a pizza near by?"
+        android:textSize="18sp"
+        android:gravity="center"
+        android:layout_marginTop="100dp"
+        android:visibility="invisible"
         />
 
-    <View
+    <!-- Footer -->
+    <FrameLayout
         android:id="@+id/footer"
         android:layout_width="match_parent"
         android:layout_height="55dp"
@@ -64,6 +72,20 @@
         android:layout_alignParentBottom="true"
         tools:background="@color/orange"
         android:layout_marginBottom="-56dp"
-        />
+        >
+
+        <TextView
+            android:id="@+id/footer_text"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="GET COUPON NOW >"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+
+            />
+
+    </FrameLayout>
 
 </RelativeLayout>

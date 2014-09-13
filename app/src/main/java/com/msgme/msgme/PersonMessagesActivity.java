@@ -187,7 +187,7 @@ public class PersonMessagesActivity extends BaseActivity {
 
         fillContactsAutoComplete();
 
-        mPopUpButtonLeft = (CustomPopupButton) findViewById(R.id.customPopupButtonLeft);
+        mPopUpButtonLeft = (CustomPopupButton) findViewById(R.id.customPopupButton_left);
         mPopUpButtonRight = (CustomPopupButton) findViewById(R.id.customPopupButton_right);
 
         mPopUpButtonLeft.setOnPopupButtonDurationPassedListener(getPopupDurationPassedListener());
