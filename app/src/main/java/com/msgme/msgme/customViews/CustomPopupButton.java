@@ -133,8 +133,6 @@ public class CustomPopupButton extends RelativeLayout {
     }
 
     public void setButtonVisibility(boolean isVisible) {
-        final Animation fadeInAnim = AnimationUtils.loadAnimation(getContext(), R.anim.fade_in);
-
         if (isVisible) {
             mPopUpButtonRootView.post(new Runnable() {
                 @Override
@@ -142,7 +140,6 @@ public class CustomPopupButton extends RelativeLayout {
                     mPopUpButtonRootView.setVisibility(VISIBLE);
                     com.nineoldandroids.view.ViewPropertyAnimator.animate(mPopUpButtonRootView).setDuration
                             (ROOT_VIEW_FADE_OUT_DURATION).alpha(1.0f);
-//                    mPopUpButtonRootView.setAnimation(fadeInAnim);
                 }
             });
         } else {

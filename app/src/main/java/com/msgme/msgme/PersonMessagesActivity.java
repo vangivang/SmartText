@@ -64,6 +64,7 @@ public class PersonMessagesActivity extends BaseActivity {
     public static final int LIST_VIEW_TRANSLATION_AMOUNT = 150;
     public static final int LEFT_POPUP = 0;
     public static final int RIGHT_POPUP = 1;
+    public static final int ANIMATE_LIST_DELAY_MILLIS = 450;
 
     // TODO: Perhaps get this from server aswell?
     public ContactMessages contactMessages = null;
@@ -253,14 +254,14 @@ public class PersonMessagesActivity extends BaseActivity {
             public void onPopupButtonDurationPassedEvent() {
 
                 if (!mIsPopupVisible) {
-                    animateListViewDown();
-
                     if (mSelectedPopupButton == LEFT_POPUP){
                         mPopUpButtonLeft.setButtonVisibility(false);
                     } else {
                         mPopUpButtonRight.setButtonVisibility(false);
                     }
-                    lightenScreen();
+
+                    delayedListAnimation();
+
                 }
             }
         };
@@ -535,7 +536,6 @@ public class PersonMessagesActivity extends BaseActivity {
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        // Wait.. now darken screen...
                         String couponString = "Not Available";
                         RoundedLayout popUpDialog = (RoundedLayout) findViewById(R.id.rounded_layout);
 
@@ -545,7 +545,7 @@ public class PersonMessagesActivity extends BaseActivity {
                                 mIsPopupVisible = false;
                                 mPopUpButtonLeft.setButtonVisibility(false);
                                 lightenScreen();
-                                animateListViewDown();
+                                delayedListAnimation();
                             }
                         });
 
@@ -572,6 +572,19 @@ public class PersonMessagesActivity extends BaseActivity {
         });
     }
 
+    private void delayedListAnimation(){
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                animateListViewDown();
+
+            }
+           // We need to wait until pop up button fades out (450ms)
+           // set in CustomPopupButton.setButtonVisibility();
+        }, ANIMATE_LIST_DELAY_MILLIS);
+    }
+
     private void darkenScreen() {
         View blackCurtain = findViewById(R.id.black_curtain);
         blackCurtain.setVisibility(View.VISIBLE);
@@ -586,8 +599,8 @@ public class PersonMessagesActivity extends BaseActivity {
         View blackCurtain = findViewById(R.id.black_curtain);
         AlphaAnimation alphaAnimation = new AlphaAnimation(0.5f, 0);
         alphaAnimation.setDuration(500);
-        alphaAnimation.setFillAfter(true);
         blackCurtain.setVisibility(View.INVISIBLE);
+        alphaAnimation.setFillAfter(true);
         blackCurtain.startAnimation(alphaAnimation);
     }
 
