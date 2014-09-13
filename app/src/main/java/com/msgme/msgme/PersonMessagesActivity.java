@@ -61,7 +61,6 @@ public class PersonMessagesActivity extends BaseActivity {
     public static final int PICK_CONTACT = 0;
     public static final int GET_ICON_FROM_LIST = 1;
     public static final int LIST_VIEW_ANIMATION_DURATION = 500;
-    public static final int LIST_VIEW_TRANSLATION_AMOUNT = 150;
     public static final int LEFT_POPUP = 0;
     public static final int RIGHT_POPUP = 1;
     public static final int ANIMATE_LIST_DELAY_MILLIS = 450;
@@ -254,7 +253,7 @@ public class PersonMessagesActivity extends BaseActivity {
             public void onPopupButtonDurationPassedEvent() {
 
                 if (!mIsPopupVisible) {
-                    if (mSelectedPopupButton == LEFT_POPUP){
+                    if (mSelectedPopupButton == LEFT_POPUP) {
                         mPopUpButtonLeft.setButtonVisibility(false);
                     } else {
                         mPopUpButtonRight.setButtonVisibility(false);
@@ -553,13 +552,14 @@ public class PersonMessagesActivity extends BaseActivity {
                                 new String[]{AppContentProvider.COLUMN_COUPON_TEXT},
                                 AppContentProvider.COLUMN_TRIGGER_WORD + "=?", new String[]{"sd"}, null);
 
-                        if (cursor != null && cursor.moveToFirst()){
-                            while (cursor.moveToNext()){
-                                couponString = cursor.getString(cursor.getColumnIndex(AppContentProvider.COLUMN_COUPON_TEXT));
+                        if (cursor != null && cursor.moveToFirst()) {
+                            while (cursor.moveToNext()) {
+                                couponString = cursor.getString(cursor.getColumnIndex(AppContentProvider
+                                        .COLUMN_COUPON_TEXT));
                             }
                         }
 
-                        if (!TextUtils.isEmpty(couponString)){
+                        if (!TextUtils.isEmpty(couponString)) {
                             popUpDialog.setCouponString(couponString);
                         }
 
@@ -572,15 +572,15 @@ public class PersonMessagesActivity extends BaseActivity {
         });
     }
 
-    private void delayedListDownAnimation(long delay){
+    private void delayedListDownAnimation(long delay) {
 
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 animateListViewDown();
             }
-           // We need to wait until pop up button fades out (450ms)
-           // set in CustomPopupButton.setButtonVisibility();
+            // We need to wait until pop up button fades out (450ms)
+            // set in CustomPopupButton.setButtonVisibility();
         }, delay);
     }
 
@@ -612,8 +612,10 @@ public class PersonMessagesActivity extends BaseActivity {
 
         };
 
-        // TODO: check which language table we need to query
         for (String string : tokens) {
+
+            // TODO: check which language table we need to query
+            // According to device local, check which language table to query
             Cursor triggerWordsCursor = getContentResolver().query
                     (AppContentProvider.CONTENT_URI_ENGLISH,
                             columns, "UPPER(" + AppContentProvider
@@ -624,6 +626,7 @@ public class PersonMessagesActivity extends BaseActivity {
             // We leave the loop because currently, one word is enough
             if (triggerWordsCursor.moveToFirst()) {
 
+                // TODO: replace this with TriggerWordEntity
                 // Save coupon text
                 triggerWordData[0] = triggerWordsCursor.getString(0);
 
