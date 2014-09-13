@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
+    android:id="@+id/root_view"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
+    android:layout_width="0dp"
+    android:layout_height="0dp"
     android:background="@drawable/rounded_rectangle_white"
+    android:visibility="visible"
     >
 
+    <!-- Header 55dp-->
     <FrameLayout
         android:id="@+id/header"
         android:layout_width="match_parent"
@@ -30,12 +32,14 @@
 
             />
 
-        <Button
+        <ImageButton
             android:id="@+id/header_cancel"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="right"
             android:gravity="center"
+            android:src="@drawable/coupon_close"
+            android:background="@null"
             android:layout_marginRight="15dp"
             />
 
@@ -44,8 +48,8 @@
     <ImageView
         android:id="@+id/coupon_image"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:background="@color/black"
+        android:layout_height="115dp"
+        android:background="@color/white"
         android:layout_marginTop="55dp"
         android:scaleType="centerCrop"
         android:visibility="invisible"
@@ -54,7 +58,7 @@
     <TextView
         android:id="@+id/coupon_text"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="75dp"
         android:layout_below="@+id/coupon_image"
         android:text="Would you like a coupon\nfor a pizza near by?"
         android:textSize="18sp"
@@ -63,7 +67,7 @@
         android:visibility="invisible"
         />
 
-    <!-- Footer -->
+    <!-- Footer 55dp -->
     <FrameLayout
         android:id="@+id/footer"
         android:layout_width="match_parent"

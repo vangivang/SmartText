@@ -519,9 +519,10 @@ public class PersonMessagesActivity extends BaseActivity {
                     @Override
                     public void run() {
                         // Wait.. now darken screen...
+                        RoundedLayout popUpDialog = (RoundedLayout) findViewById(R.id.rounded_layout);
+                        popUpDialog.animateView();
                         darkenScreen();
                         // Que in pop up animation
-                        ((RoundedLayout)findViewById(R.id.rounded_layout)).animateView();
 //                        animate(animateMe).translationYBy(30).setDuration(400);
                     }
                 }, 200);
