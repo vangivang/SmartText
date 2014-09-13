@@ -44,6 +44,7 @@ import android.widget.Toast;
 import com.msgme.msgme.BaseClasses.BaseActivity;
 import com.msgme.msgme.adapters.MessagesAdapter;
 import com.msgme.msgme.customViews.CustomPopupButton;
+import com.msgme.msgme.customViews.RoundedLayout;
 import com.msgme.msgme.database.AppContentProvider;
 import com.msgme.msgme.vo.ContactMessages;
 import com.msgme.msgme.vo.ContactsMap;
@@ -510,6 +511,7 @@ public class PersonMessagesActivity extends BaseActivity {
         mPopUpButtonLeft.setOnClickListenerToRootView(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 //TODO: open pop up view animatedly
                 closeKeyboard(mPopUpButtonLeft);
 
@@ -519,10 +521,13 @@ public class PersonMessagesActivity extends BaseActivity {
                         // Wait.. now darken screen...
                         darkenScreen();
                         // Que in pop up animation
+                        ((RoundedLayout)findViewById(R.id.rounded_layout)).animateView();
+//                        animate(animateMe).translationYBy(30).setDuration(400);
                     }
                 }, 200);
-                Toast.makeText(PersonMessagesActivity.this, "Pop up clicked... animate view",
-                        Toast.LENGTH_LONG).show();
+
+//                Toast.makeText(PersonMessagesActivity.this, "Pop up clicked... animate view",
+//                        Toast.LENGTH_LONG).show();
             }
         });
     }
