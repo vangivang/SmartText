@@ -5,31 +5,32 @@ import android.graphics.Bitmap;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Transformation;
-import android.view.animation.TranslateAnimation;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.msgme.msgme.R;
-import com.nineoldandroids.view.animation.AnimatorProxy;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.SimpleImageLoadingListener;
 
 /**
  * Created by alonm on 9/11/14.
  */
-public class RoundedLayout extends RelativeLayout {
+public class RoundedLayout extends RelativeLayout implements View.OnClickListener{
 
+    public interface OnCouponDialogClosedListener{
+        public void onCouponDialogClosedEvent();
+    }
 
+    private OnCouponDialogClosedListener mOnCouponDialogClosedListener;
     private View mInflatedView;
     private RelativeLayout mRootView;
+    private ImageView mCouponImage;
 
-    private enum ViewItems {VIEW_CONTAINER, HEADER, FOOTER, COUPON_TEXT, COUPON_IMAGE}
+    private enum ViewItems {VIEW_CONTAINER_EXPAND, VIEW_CONTAINER_COLLAPSE, HEADER, FOOTER, COUPON_TEXT, COUPON_IMAGE}
 
     public static final int HEADER_FOOTER_ANIM_DURATION = 350;
     private View mHeaderView;
@@ -71,6 +72,8 @@ public class RoundedLayout extends RelativeLayout {
         mFooterView = mInflatedView.findViewById(R.id.footer);
         mCouponText = (TextView) mInflatedView.findViewById(R.id.coupon_text);
         mRootView = (RelativeLayout) mInflatedView.findViewById(R.id.root_view);
+        mCouponImage = (ImageView) mInflatedView.findViewById(R.id.coupon_image);
+        mInflatedView.findViewById(R.id.header_cancel).setOnClickListener(this);
     }
 
     public void setCouponString(String couponText) {
@@ -80,7 +83,7 @@ public class RoundedLayout extends RelativeLayout {
     public void animateView() {
 
 
-        animationControl(ViewItems.VIEW_CONTAINER, mRootView, HEADER_FOOTER_ANIM_DURATION,
+        animationControl(ViewItems.VIEW_CONTAINER_EXPAND, mRootView, HEADER_FOOTER_ANIM_DURATION,
                 new Animation.AnimationListener() {
 
 
@@ -122,13 +125,12 @@ public class RoundedLayout extends RelativeLayout {
     }
 
     private void animateCouponImage() {
-        final ImageView couponImage = (ImageView) mInflatedView.findViewById(R.id.coupon_image);
-        ImageLoader.getInstance().displayImage("http://smartxt.me/images/Dinner.png", couponImage,
+        ImageLoader.getInstance().displayImage("http://smartxt.me/images/Dinner.png", mCouponImage,
                 new SimpleImageLoadingListener() {
             @Override
             public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
                 super.onLoadingComplete(imageUri, view, loadedImage);
-                couponImage.setVisibility(VISIBLE);
+                mCouponImage.setVisibility(VISIBLE);
             }
         });
     }
@@ -139,6 +141,8 @@ public class RoundedLayout extends RelativeLayout {
         final MarginLayoutParams params = (MarginLayoutParams) viewToAnimate.getLayoutParams();
         final int topMargin = params.topMargin;
         final int bottomMargin = params.bottomMargin;
+        final float viewWidth = getResources().getDimension(R.dimen.popup_width);
+        final float viewHeight = getResources().getDimension(R.dimen.popup_height);
 
         Animation appliedAnimation = new Animation(getContext(), null) {
 
@@ -146,16 +150,17 @@ public class RoundedLayout extends RelativeLayout {
             protected void applyTransformation(float interpolatedTime, Transformation t) {
 
                 switch (itemToAnimate) {
-                    case VIEW_CONTAINER:
-                        float viewWidth = getResources().getDimension(R.dimen.popup_width);
-                        float viewHeight = getResources().getDimension(R.dimen.popup_height);
+                    case VIEW_CONTAINER_EXPAND:
                         params.width = 0;
                         params.height = 0;
-//                        viewToAnimate.setVisibility(VISIBLE);
                         viewToAnimate.getLayoutParams().height = (int) (viewHeight * interpolatedTime);
                         viewToAnimate.getLayoutParams().width = (int) (viewWidth * interpolatedTime);
                         viewToAnimate.requestLayout();
                         break;
+                    case VIEW_CONTAINER_COLLAPSE:
+                        viewToAnimate.getLayoutParams().width = (int) (viewWidth - (viewWidth * interpolatedTime));
+                        viewToAnimate.getLayoutParams().height = (int) (viewHeight - (viewHeight * interpolatedTime));
+                        viewToAnimate.requestLayout();
                     case HEADER:
                         params.setMargins(0, (int) (topMargin * (1 - interpolatedTime)), 0, 0);
                         viewToAnimate.requestLayout();
@@ -183,5 +188,46 @@ public class RoundedLayout extends RelativeLayout {
         appliedAnimation.setInterpolator(new DecelerateInterpolator());
 
         viewToAnimate.startAnimation(appliedAnimation);
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.header_cancel:
+                mHeaderView.clearAnimation();
+                mHeaderView.setVisibility(INVISIBLE);
+
+                mFooterView.clearAnimation();
+                mFooterView.setVisibility(INVISIBLE);
+
+                mCouponImage.setVisibility(INVISIBLE);
+
+                mCouponText.clearAnimation();
+                mCouponText.setVisibility(INVISIBLE);
+
+                animationControl(ViewItems.VIEW_CONTAINER_COLLAPSE, mRootView, HEADER_FOOTER_ANIM_DURATION, new Animation.AnimationListener() {
+
+
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        mOnCouponDialogClosedListener.onCouponDialogClosedEvent();
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+
+                    }
+                });
+                break;
+        }
+    }
+
+    public void setOnCouponDialogClosedListener(OnCouponDialogClosedListener onCouponDialogClosedListener) {
+        mOnCouponDialogClosedListener = onCouponDialogClosedListener;
     }
 }

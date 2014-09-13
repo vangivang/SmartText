@@ -83,7 +83,7 @@ public class CustomPopupButton extends RelativeLayout {
                     @Override
                     public void run() {
 
-                        setButtonVisibility(false);
+//                        setButtonVisibility(false);
 
                         new Handler().postDelayed(new Runnable() {
                             @Override
@@ -132,7 +132,7 @@ public class CustomPopupButton extends RelativeLayout {
         mOnPopupButtonDurationPassedListener = listner;
     }
 
-    private void setButtonVisibility(boolean isVisible) {
+    public void setButtonVisibility(boolean isVisible) {
         final Animation fadeInAnim = AnimationUtils.loadAnimation(getContext(), R.anim.fade_in);
 
         if (isVisible) {

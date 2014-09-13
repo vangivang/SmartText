@@ -83,6 +83,8 @@ public class PersonMessagesActivity extends BaseActivity {
     private static final int TIME_TO_WAIT = 5000;
 
     public Boolean isRefreshIsNeeded = false;
+    private boolean mIsPopupVisible = false;
+
     private static int mutex = 0;
 
     private CustomPopupButton mPopUpButtonLeft;
@@ -116,7 +118,6 @@ public class PersonMessagesActivity extends BaseActivity {
             return true;
         }
     });
-
 
     private class UpdateList extends AsyncTask<String, Integer, String> {
 
@@ -246,8 +247,12 @@ public class PersonMessagesActivity extends BaseActivity {
 
             @Override
             public void onPopupButtonDurationPassedEvent() {
-                animateListViewDown();
-                lightenScreen();
+
+                if (!mIsPopupVisible){
+                    animateListViewDown();
+                    mPopUpButtonLeft.setButtonVisibility(false);
+                    lightenScreen();
+                }
             }
         };
     }
@@ -514,21 +519,29 @@ public class PersonMessagesActivity extends BaseActivity {
 
                 //TODO: open pop up view animatedly
                 closeKeyboard(mPopUpButtonLeft);
+                mIsPopupVisible = true;
 
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         // Wait.. now darken screen...
                         RoundedLayout popUpDialog = (RoundedLayout) findViewById(R.id.rounded_layout);
+
+                        popUpDialog.setOnCouponDialogClosedListener(new RoundedLayout.OnCouponDialogClosedListener() {
+                            @Override
+                            public void onCouponDialogClosedEvent() {
+                                mIsPopupVisible = false;
+                                mPopUpButtonLeft.setButtonVisibility(false);
+                                lightenScreen();
+                                animateListViewDown();
+                            }
+                        });
+
                         popUpDialog.animateView();
                         darkenScreen();
-                        // Que in pop up animation
-//                        animate(animateMe).translationYBy(30).setDuration(400);
                     }
                 }, 200);
 
-//                Toast.makeText(PersonMessagesActivity.this, "Pop up clicked... animate view",
-//                        Toast.LENGTH_LONG).show();
             }
         });
     }
