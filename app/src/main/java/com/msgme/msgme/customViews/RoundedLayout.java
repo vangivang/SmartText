@@ -80,7 +80,7 @@ public class RoundedLayout extends RelativeLayout implements View.OnClickListene
         mCouponString = couponText;
     }
 
-    public void animateView() {
+    public void animateView(final String[] triggerWordData) {
 
 
         animationControl(ViewItems.VIEW_CONTAINER_EXPAND, mRootView, HEADER_FOOTER_ANIM_DURATION,
@@ -94,7 +94,7 @@ public class RoundedLayout extends RelativeLayout implements View.OnClickListene
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                animateCouponImage();
+                getCouponImageFromServer(triggerWordData[1]);
                 animationControl(ViewItems.HEADER, mHeaderView, HEADER_FOOTER_ANIM_DURATION, null);
                 animationControl(ViewItems.FOOTER, mFooterView, HEADER_FOOTER_ANIM_DURATION,
                         new Animation.AnimationListener() {
@@ -106,7 +106,7 @@ public class RoundedLayout extends RelativeLayout implements View.OnClickListene
                     @Override
                     public void onAnimationEnd(Animation animation) {
                         mCouponText.setVisibility(VISIBLE);
-//                mCouponText.setText(mCouponString);
+                        mCouponText.setText(triggerWordData[0]);
                         animationControl(ViewItems.COUPON_TEXT, mCouponText, HEADER_FOOTER_ANIM_DURATION, null);
                     }
 
@@ -124,9 +124,8 @@ public class RoundedLayout extends RelativeLayout implements View.OnClickListene
         });
     }
 
-    private void animateCouponImage() {
-        ImageLoader.getInstance().displayImage("http://smartxt.me/images/Dinner.png", mCouponImage,
-                new SimpleImageLoadingListener() {
+    private void getCouponImageFromServer(String couponUrl) {
+        ImageLoader.getInstance().displayImage(couponUrl, mCouponImage, new SimpleImageLoadingListener() {
             @Override
             public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
                 super.onLoadingComplete(imageUri, view, loadedImage);

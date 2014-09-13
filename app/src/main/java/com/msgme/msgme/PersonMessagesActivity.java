@@ -62,6 +62,8 @@ public class PersonMessagesActivity extends BaseActivity {
     public static final int GET_ICON_FROM_LIST = 1;
     public static final int LIST_VIEW_ANIMATION_DURATION = 500;
     public static final int LIST_VIEW_TRANSLATION_AMOUNT = 150;
+    public static final int LEFT_POPUP = 0;
+    public static final int RIGHT_POPUP = 1;
 
     // TODO: Perhaps get this from server aswell?
     public ContactMessages contactMessages = null;
@@ -86,6 +88,7 @@ public class PersonMessagesActivity extends BaseActivity {
     private boolean mIsPopupVisible = false;
 
     private static int mutex = 0;
+    private int mSelectedPopupButton;
 
     private CustomPopupButton mPopUpButtonLeft;
     private CustomPopupButton mPopUpButtonRight;
@@ -118,6 +121,7 @@ public class PersonMessagesActivity extends BaseActivity {
             return true;
         }
     });
+
 
     private class UpdateList extends AsyncTask<String, Integer, String> {
 
@@ -248,9 +252,14 @@ public class PersonMessagesActivity extends BaseActivity {
             @Override
             public void onPopupButtonDurationPassedEvent() {
 
-                if (!mIsPopupVisible){
+                if (!mIsPopupVisible) {
                     animateListViewDown();
-                    mPopUpButtonLeft.setButtonVisibility(false);
+
+                    if (mSelectedPopupButton == LEFT_POPUP){
+                        mPopUpButtonLeft.setButtonVisibility(false);
+                    } else {
+                        mPopUpButtonRight.setButtonVisibility(false);
+                    }
                     lightenScreen();
                 }
             }
@@ -471,19 +480,19 @@ public class PersonMessagesActivity extends BaseActivity {
             String[] tokens = getTokenWordsFromIncomingMessageBody(smsMessageBody);
 
             // For each word token in array, check in data base if there is a
-            // corresponding trigger word
-            String triggerWordUrl = getFoundTriggerWordImageUrl(tokens);
+            // corresponding trigger word and return both url and trigger word itself
+            String[] triggerWordData = getFoundTriggerWordImageUrl(tokens);
 
             // If we have a url, we can execute a pop up animation
-            if (triggerWordUrl != null) {
-                activatePopUp(side);
+            if (triggerWordData != null) {
+                activatePopUp(side, triggerWordData);
             } else {
                 Log.d("LOGGY", "We have no url");
             }
         }
     }
 
-    private void activatePopUp(final CustomPopupButton.PopupButtonSide side) {
+    private void activatePopUp(final CustomPopupButton.PopupButtonSide side, final String[] triggerWordData) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -499,9 +508,11 @@ public class PersonMessagesActivity extends BaseActivity {
                         switch (side) {
                             case LEFT:
                                 mPopUpButtonLeft.onTriggerWordFound();
+                                mSelectedPopupButton = LEFT_POPUP;
                                 break;
                             case RIGHT:
                                 mPopUpButtonRight.onTriggerWordFound();
+                                mSelectedPopupButton = RIGHT_POPUP;
                                 break;
                             default:
                                 break;
@@ -525,6 +536,7 @@ public class PersonMessagesActivity extends BaseActivity {
                     @Override
                     public void run() {
                         // Wait.. now darken screen...
+                        String couponString = "Not Available";
                         RoundedLayout popUpDialog = (RoundedLayout) findViewById(R.id.rounded_layout);
 
                         popUpDialog.setOnCouponDialogClosedListener(new RoundedLayout.OnCouponDialogClosedListener() {
@@ -537,10 +549,24 @@ public class PersonMessagesActivity extends BaseActivity {
                             }
                         });
 
-                        popUpDialog.animateView();
+                        Cursor cursor = getContentResolver().query(AppContentProvider.CONTENT_URI_ENGLISH,
+                                new String[]{AppContentProvider.COLUMN_COUPON_TEXT},
+                                AppContentProvider.COLUMN_TRIGGER_WORD + "=?", new String[]{"sd"}, null);
+
+                        if (cursor != null && cursor.moveToFirst()){
+                            while (cursor.moveToNext()){
+                                couponString = cursor.getString(cursor.getColumnIndex(AppContentProvider.COLUMN_COUPON_TEXT));
+                            }
+                        }
+
+                        if (!TextUtils.isEmpty(couponString)){
+                            popUpDialog.setCouponString(couponString);
+                        }
+
+                        popUpDialog.animateView(triggerWordData);
                         darkenScreen();
                     }
-                }, 200);
+                }, 200); // keyboard closes and 200 ms after that, start this handler
 
             }
         });
@@ -565,12 +591,16 @@ public class PersonMessagesActivity extends BaseActivity {
         blackCurtain.startAnimation(alphaAnimation);
     }
 
-    private String getFoundTriggerWordImageUrl(String[] tokens) {
+    private String[] getFoundTriggerWordImageUrl(String[] tokens) {
 
-        String triggerWordUrl = null;
-        String[] columns = {AppContentProvider.COLUMN_TRIGGER_WORD,
-                AppContentProvider.COLUMN_TRIGGER_WORD_IMAGE_URL};
+        String[] triggerWordData = new String[2];
 
+        String[] columns = {AppContentProvider.COLUMN_COUPON_TEXT,
+                AppContentProvider.COLUMN_TRIGGER_WORD_IMAGE_URL
+
+        };
+
+        // TODO: check which language table we need to query
         for (String string : tokens) {
             Cursor triggerWordsCursor = getContentResolver().query
                     (AppContentProvider.CONTENT_URI_ENGLISH,
@@ -581,12 +611,17 @@ public class PersonMessagesActivity extends BaseActivity {
             // If we have results, save the url of that word token and exit loop
             // We leave the loop because currently, one word is enough
             if (triggerWordsCursor.moveToFirst()) {
-                triggerWordUrl = triggerWordsCursor.getString(1);
+
+                // Save coupon text
+                triggerWordData[0] = triggerWordsCursor.getString(0);
+
+                // Save coupon image URL
+                triggerWordData[1] = triggerWordsCursor.getString(1);
                 triggerWordsCursor.close();
                 break;
             }
         }
-        return triggerWordUrl;
+        return triggerWordData;
     }
 
     private String[] getTokenWordsFromIncomingMessageBody(String smsMessageBody) {
