@@ -13,6 +13,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.msgme.msgme.R;
+import com.msgme.msgme.database.TriggerWordEntity;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.SimpleImageLoadingListener;
 
@@ -80,7 +81,7 @@ public class RoundedLayout extends RelativeLayout implements View.OnClickListene
         mCouponString = couponText;
     }
 
-    public void animateView(final String[] triggerWordData) {
+    public void animateView(final TriggerWordEntity triggerWordData) {
 
 
         animationControl(ViewItems.VIEW_CONTAINER_EXPAND, mRootView, HEADER_FOOTER_ANIM_DURATION,
@@ -94,7 +95,7 @@ public class RoundedLayout extends RelativeLayout implements View.OnClickListene
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                getCouponImageFromServer(triggerWordData[1]);
+                getCouponImageFromServer(triggerWordData.getImageUrl());
                 animationControl(ViewItems.HEADER, mHeaderView, HEADER_FOOTER_ANIM_DURATION, null);
                 animationControl(ViewItems.FOOTER, mFooterView, HEADER_FOOTER_ANIM_DURATION,
                         new Animation.AnimationListener() {
@@ -106,10 +107,9 @@ public class RoundedLayout extends RelativeLayout implements View.OnClickListene
                     @Override
                     public void onAnimationEnd(Animation animation) {
                         mCouponText.setVisibility(VISIBLE);
-                        String couponText = triggerWordData[0];
+                        String couponText = triggerWordData.getCouponText();
 
-                        mCouponText.setText(couponText.replace("x", triggerWordData[2]));
-//                        mCouponText.setText(couponText.replace("%1$s", triggerWordData[2]));
+                        mCouponText.setText(couponText.replace("%1$s", triggerWordData.getText()));
                         animationControl(ViewItems.COUPON_TEXT, mCouponText, HEADER_FOOTER_ANIM_DURATION, null);
                     }
 

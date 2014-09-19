@@ -46,6 +46,7 @@ import com.msgme.msgme.adapters.MessagesAdapter;
 import com.msgme.msgme.customViews.CustomPopupButton;
 import com.msgme.msgme.customViews.RoundedLayout;
 import com.msgme.msgme.database.AppContentProvider;
+import com.msgme.msgme.database.TriggerWordEntity;
 import com.msgme.msgme.vo.ContactMessages;
 import com.msgme.msgme.vo.ContactsMap;
 
@@ -481,7 +482,7 @@ public class PersonMessagesActivity extends BaseActivity {
 
             // For each word token in array, check in data base if there is a
             // corresponding trigger word and return both url and trigger word itself
-            String[] triggerWordData = getFoundTriggerWordImageUrl(tokens);
+            TriggerWordEntity triggerWordData = getFoundTriggerWordImageUrl(tokens);
 
             // If we have a url, we can execute a pop up animation
             if (triggerWordData != null) {
@@ -492,7 +493,7 @@ public class PersonMessagesActivity extends BaseActivity {
         }
     }
 
-    private void activatePopUp(final CustomPopupButton.PopupButtonSide side, final String[] triggerWordData) {
+    private void activatePopUp(final CustomPopupButton.PopupButtonSide side, final TriggerWordEntity triggerWordData) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -603,9 +604,9 @@ public class PersonMessagesActivity extends BaseActivity {
         blackCurtain.startAnimation(alphaAnimation);
     }
 
-    private String[] getFoundTriggerWordImageUrl(String[] tokens) {
+    private TriggerWordEntity getFoundTriggerWordImageUrl(String[] tokens) {
 
-        String[] triggerWordData = new String[3];
+        TriggerWordEntity triggerWordEntity = null;
 
         String[] columns = {AppContentProvider.COLUMN_COUPON_TEXT,
                 AppContentProvider.COLUMN_TRIGGER_WORD_IMAGE_URL
@@ -627,20 +628,21 @@ public class PersonMessagesActivity extends BaseActivity {
             if (triggerWordsCursor.moveToFirst()) {
 
                 // TODO: replace this with TriggerWordEntity
+
                 // Save coupon text
-                triggerWordData[0] = triggerWordsCursor.getString(0);
+                String couponText = triggerWordsCursor.getString(0);
 
                 // Save coupon image URL
-                triggerWordData[1] = triggerWordsCursor.getString(1);
+                String couponImageUrl = triggerWordsCursor.getString(1);
 
                 // Save coupon trigger word
-                triggerWordData[2] = string;
+                triggerWordEntity = new TriggerWordEntity("english", couponText, string, couponImageUrl);
 
                 triggerWordsCursor.close();
                 break;
             }
         }
-        return triggerWordData;
+        return triggerWordEntity;
     }
 
     private String[] getTokenWordsFromIncomingMessageBody(String smsMessageBody) {

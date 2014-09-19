@@ -3,7 +3,7 @@
     <language name="english">
 
         <coupon>
-            <text>would you like a coupon for x nearby ?</text>
+            <text>would you like a coupon for %1$s nearby ?</text>
         </coupon>
 
         <entry>
@@ -175,7 +175,7 @@
     <language name="portuguese">
 
         <coupon>
-            <text>cupom para x nas proximidades?</text>
+            <text>cupom para %1$s nas proximidades?</text>
         </coupon>
 
         <entry>
@@ -348,7 +348,7 @@
     <language name="spanish">
 
         <coupon>
-            <text>quieres un cupón para x cerca?</text>
+            <text>quieres un cupón para %1$s cerca?</text>
         </coupon>
 
         <entry>
@@ -521,7 +521,7 @@
     <language name="arabic">
 
         <coupon>
-            <text>تريد قسيمة x يوجد بالقرب منها؟?</text>
+            <text>تريد قسيمة %1$s يوجد بالقرب منها؟?</text>
         </coupon>
 
         <entry>
@@ -694,7 +694,7 @@
     <language name="chinese">
 
         <coupon>
-            <text>你想获得优惠券的 x 附近吗？</text>
+            <text>你想获得优惠券的 %1$s 附近吗？</text>
         </coupon>
 
         <entry>

@@ -6,46 +6,28 @@ package com.msgme.msgme.database;
 public class TriggerWordEntity {
 
     private String mLanguage;
-    private String mCouponText;
-    private String mText;
+    private String mCouponTeaserText;
+    private String mTriggerWord;
     private String mImageUrl;
 
     public TriggerWordEntity(String mLanguage, String mCouponText, String mText, String mImageUrl) {
         this.mLanguage = mLanguage;
-        this.mCouponText = mCouponText;
-        this.mText = mText;
+        this.mCouponTeaserText = mCouponText;
+        this.mTriggerWord = mText;
         this.mImageUrl = mImageUrl;
     }
 
     public String getLanguage() {
         return mLanguage;
     }
-
-    public void setmLanguage(String mLanguage) {
-        this.mLanguage = mLanguage;
-    }
-
     public String getCouponText() {
-        return mCouponText;
+        return mCouponTeaserText;
     }
-
-    public void setmCouponText(String mCouponText) {
-        this.mCouponText = mCouponText;
-    }
-
     public String getText() {
-        return mText;
+        return mTriggerWord;
     }
-
-    public void setmText(String mText) {
-        this.mText = mText;
-    }
-
     public String getImageUrl() {
         return mImageUrl;
     }
 
-    public void setmImageUrl(String mImageUrl) {
-        this.mImageUrl = mImageUrl;
-    }
 }
