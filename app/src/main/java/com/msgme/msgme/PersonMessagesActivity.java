@@ -274,16 +274,20 @@ public class PersonMessagesActivity extends BaseActivity {
 
     private void animateListViewDown() {
 
-        animate(lvMessagesList).setDuration(LIST_VIEW_ANIMATION_DURATION).translationYBy
-                (getListViewRowHeight()).setInterpolator(new
-                AccelerateDecelerateInterpolator());
+        if (lvMessagesList != null){
+            animate(lvMessagesList).setDuration(LIST_VIEW_ANIMATION_DURATION).translationYBy
+                    (getListViewRowHeight()).setInterpolator(new
+                    AccelerateDecelerateInterpolator());
+        }
     }
 
     private void animateListViewUp() {
 
-        animate(lvMessagesList).setDuration(LIST_VIEW_ANIMATION_DURATION).translationYBy
-                (-getListViewRowHeight()).setInterpolator(new
-                AccelerateDecelerateInterpolator());
+        if (lvMessagesList != null){
+            animate(lvMessagesList).setDuration(LIST_VIEW_ANIMATION_DURATION).translationYBy
+                    (-getListViewRowHeight()).setInterpolator(new
+                    AccelerateDecelerateInterpolator());
+        }
     }
 
     private int getListViewRowHeight() {
@@ -291,6 +295,7 @@ public class PersonMessagesActivity extends BaseActivity {
         View view = adapter.getView(adapter.getCount() - 1, null, lvMessagesList);
         view.measure(View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
                 View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+
         return view.getMeasuredHeight() + 26;
     }
 
@@ -407,29 +412,40 @@ public class PersonMessagesActivity extends BaseActivity {
     private void showMessagesState() {
         //Get the ContactMessages That was clicked
 
-        contactMessages = (ContactMessages) getIntent().getSerializableExtra("contactMessages");
-        if (contactMessages.getThread_id() == null) {
-            String from = (String) getIntent().getSerializableExtra("phone");
-            Cursor cursor1 = getContentResolver().query(Uri.parse("content://sms/inbox"),
-                    new String[]{"thread_id"}, "_id=?", new String[]{from}, null);
-            cursor1.moveToFirst();
-            contactMessages.setThread_id(cursor1.getString(cursor1.getColumnIndex("thread_id")));
+        try{
+            contactMessages = (ContactMessages) getIntent().getSerializableExtra("contactMessages");
+            if (contactMessages.getThread_id() == null) {
+                String from = (String) getIntent().getSerializableExtra("phone");
+                Cursor cursor1 = getContentResolver().query(Uri.parse("content://sms/inbox"),
+                        new String[]{"thread_id"}, "_id=?", new String[]{from}, null);
+                cursor1.moveToFirst();
+                contactMessages.setThread_id(cursor1.getString(cursor1.getColumnIndex("thread_id")));
+            }
+
+            TextView tvPersonalMessagesTitle = (TextView) findViewById(R.id.txtPersonalMessages);
+            tvPersonalMessagesTitle.setText(contactMessages.getName() == null ? contactMessages.getPhone() :
+                    contactMessages.getName());
+
+            getMessagesByThreadId(false);
+
+            showMessages();
+
+        } catch (Exception e){
+            // Some error...
         }
 
-        TextView tvPersonalMessagesTitle = (TextView) findViewById(R.id.txtPersonalMessages);
-        tvPersonalMessagesTitle.setText(contactMessages.getName() == null ? contactMessages.getPhone() :
-                contactMessages.getName());
-
-        getMessagesByThreadId(false);
-
-        showMessages();
     }
 
     private void showMessages() {
-        lvMessagesList = (ListView) findViewById(R.id.messagesList);
-        lvMessagesList.setStackFromBottom(true);
-        adapter = new MessagesAdapter(this, contactMessages.getMessages());
-        lvMessagesList.setAdapter(adapter);
+
+        try{
+            lvMessagesList = (ListView) findViewById(R.id.messagesList);
+            lvMessagesList.setStackFromBottom(true);
+            adapter = new MessagesAdapter(this, contactMessages.getMessages());
+            lvMessagesList.setAdapter(adapter);
+        } catch (Exception e){
+            // Some error...
+        }
     }
 
     /**
@@ -580,7 +596,7 @@ public class PersonMessagesActivity extends BaseActivity {
                             popUpDialog.setCouponString(couponString);
                         }
 
-                        popUpDialog.animateView(triggerWordData);
+                        popUpDialog.animateOpenPopup(triggerWordData);
                         darkenScreen();
                     }
                 }, 200); // keyboard closes and 200 ms after that, start this handler
@@ -961,19 +977,22 @@ public class PersonMessagesActivity extends BaseActivity {
     //sends an SMS message to another device
     private void sendSMS(final String phoneNumber, final String message) {
 
-        String SENT = "SMS_SENT";
-        String DELIVERED = "SMS_DELIVERED";
+        if (!TextUtils.isEmpty(message)){
+            String SENT = "SMS_SENT";
+            String DELIVERED = "SMS_DELIVERED";
 
-        PendingIntent sentPI = PendingIntent.getBroadcast(this, 0,
-                new Intent(SENT), 0);
+            PendingIntent sentPI = PendingIntent.getBroadcast(this, 0,
+                    new Intent(SENT), 0);
 
-        PendingIntent deliveredPI = PendingIntent.getBroadcast(this, 0,
-                new Intent(DELIVERED), 0);
+            PendingIntent deliveredPI = PendingIntent.getBroadcast(this, 0,
+                    new Intent(DELIVERED), 0);
 
-        SmsManager sms = SmsManager.getDefault();
-        sms.sendTextMessage(phoneNumber, null, message, sentPI, deliveredPI);
+            SmsManager sms = SmsManager.getDefault();
+            sms.sendTextMessage(phoneNumber, null, message, sentPI, deliveredPI);
 
-        addToSentContenProvider(phoneNumber, message);
+            addToSentContenProvider(phoneNumber, message);
+        }
+
     }
 
 

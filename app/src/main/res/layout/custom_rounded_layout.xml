@@ -5,6 +5,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="0dp"
     android:layout_height="0dp"
+    tools:layout_width="match_parent"
+    tools:layout_height="match_parent"
     android:background="@drawable/rounded_rectangle_white"
     android:visibility="visible"
     >
@@ -26,7 +28,7 @@
             android:layout_height="match_parent"
             android:layout_gravity="center"
             android:gravity="center"
-            android:text="Free Coupon"
+            android:text="@string/popupHeaderText"
             android:textColor="@color/white"
             android:textSize="22sp"
 
@@ -40,7 +42,8 @@
             android:gravity="center"
             android:src="@drawable/coupon_close"
             android:background="@null"
-            android:layout_marginRight="15dp"
+            android:paddingRight="20dp"
+            android:paddingLeft="20dp"
             />
 
     </FrameLayout>
@@ -50,21 +53,24 @@
         android:layout_width="match_parent"
         android:layout_height="115dp"
         android:background="@color/white"
+        tools:background="@color/black"
         android:layout_marginTop="55dp"
         android:scaleType="centerCrop"
         android:visibility="invisible"
+        tools:visibility="visible"
         android:contentDescription="pop_up_image"/>
 
     <TextView
         android:id="@+id/coupon_text"
         android:layout_width="match_parent"
         android:layout_height="75dp"
-        android:layout_below="@+id/coupon_image"
-        android:text="Would you like a coupon\nfor a pizza near by?"
+        tools:text="Would you like a coupon\nfor a pizza near by?"
         android:textSize="18sp"
         android:gravity="center"
+        android:layout_below="@+id/coupon_image"
         android:layout_marginTop="100dp"
         android:visibility="invisible"
+        tools:visibility="visible"
         />
 
     <!-- Footer 55dp -->
@@ -76,6 +82,7 @@
         android:layout_alignParentBottom="true"
         tools:background="@color/orange"
         android:layout_marginBottom="-56dp"
+        tools:layout_marginBottom="0dp"
         >
 
         <TextView
@@ -84,12 +91,22 @@
             android:layout_height="match_parent"
             android:layout_gravity="center"
             android:gravity="center"
-            android:text="GET COUPON NOW >"
+            android:text="@string/popupFooterText"
             android:textColor="@color/white"
             android:textSize="18sp"
-
             />
-
     </FrameLayout>
 
+    <TextView
+        android:id="@+id/thank_you_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/thank_you_text"
+        android:layout_centerInParent="true"
+        android:textSize="24sp"
+        android:textColor="@color/white"
+        android:gravity="center"
+        android:visibility="gone"
+        tools:visibility="visible"
+        />
 </RelativeLayout>
