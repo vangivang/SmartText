@@ -99,19 +99,8 @@ public class CustomPopupButton extends RelativeLayout {
     }
 
     public void startPulseAnimation(final ImageView view) {
-
-//        com.nineoldandroids.view.ViewPropertyAnimator.animate(view).scaleX(2.05f).setDuration(400);
-
         final Animation pulse = AnimationUtils.loadAnimation(getContext(), R.anim.pulse_animation_on);
         view.startAnimation(pulse);
-
-//        view.post(new Runnable() {
-//            @Override
-//            public void run() {
-//                view.startAnimation(pulse);
-//
-//            }
-//        });
     }
 
     public void stopPulseAnimation(final ImageView view) {

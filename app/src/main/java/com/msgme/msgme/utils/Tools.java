@@ -45,4 +45,8 @@ public class Tools {
         return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp,
                 ctx.getResources().getDisplayMetrics());
     }
+
+    public static String getLocale(Locale locale) {
+        return locale.getLanguage();
+    }
 }

@@ -17,7 +17,6 @@ import com.msgme.msgme.R;
 import com.msgme.msgme.database.TriggerWordEntity;
 import com.msgme.msgme.utils.Tools;
 import com.nineoldandroids.animation.Animator;
-import com.nineoldandroids.view.animation.AnimatorProxy;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.SimpleImageLoadingListener;
 
@@ -34,8 +33,9 @@ public class RoundedLayout extends RelativeLayout implements View.OnClickListene
     private int mTranslateTextBy;
     private TextView mThankYouText;
 
-    private enum ViewItems {VIEW_CONTAINER_EXPAND, VIEW_CONTAINER_COLLAPSE, HEADER_DOWN, FOOTER_UP, COUPON_TEXT_UP,
-        FOOTER_EXPAND_UP, COUPON_IMAGE, THANK_YOU_TEXT}
+    private enum ViewItems {
+        VIEW_CONTAINER_EXPAND_RIGHT, VIEW_CONTAINER_COLLAPSE, HEADER_DOWN, FOOTER_UP, COUPON_TEXT_UP,
+        FOOTER_EXPAND_UP, COUPON_IMAGE, VIEW_CONTAINER_EXPAND_LEFT, THANK_YOU_TEXT}
 
     public static final int HEADER_FOOTER_ANIM_DURATION = 350;
     private View mHeaderView;
@@ -95,9 +95,9 @@ public class RoundedLayout extends RelativeLayout implements View.OnClickListene
     }
 
     public void animateOpenPopup(final TriggerWordEntity triggerWordData) {
+        // TODO: this method needs to know if its the left side or right side popup view
 
-
-        animationControl(ViewItems.VIEW_CONTAINER_EXPAND, mRootView, HEADER_FOOTER_ANIM_DURATION,
+        animationControl(ViewItems.VIEW_CONTAINER_EXPAND_RIGHT, mRootView, HEADER_FOOTER_ANIM_DURATION,
                 new Animation.AnimationListener() {
 
 
@@ -164,12 +164,21 @@ public class RoundedLayout extends RelativeLayout implements View.OnClickListene
             protected void applyTransformation(float interpolatedTime, Transformation t) {
 
                 switch (itemToAnimate) {
-                    case VIEW_CONTAINER_EXPAND:
+                    case VIEW_CONTAINER_EXPAND_RIGHT:
                         if (interpolatedTime < 1) {
                             params.width = 0;
                             params.height = 0;
                             viewToAnimate.getLayoutParams().height = (int) (viewHeight * interpolatedTime);
                             viewToAnimate.getLayoutParams().width = (int) (viewWidth * interpolatedTime);
+                            viewToAnimate.requestLayout();
+                        }
+                        break;
+                    case VIEW_CONTAINER_EXPAND_LEFT:
+                        if (interpolatedTime < 1){
+                            params.width = 0;
+                            params.height = 0;
+                            viewToAnimate.getLayoutParams().height = (int) (viewHeight * interpolatedTime);
+                            viewToAnimate.getLayoutParams().width = (int) -(viewWidth * interpolatedTime);
                             viewToAnimate.requestLayout();
                         }
                         break;

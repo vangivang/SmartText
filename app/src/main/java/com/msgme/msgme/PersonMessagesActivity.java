@@ -274,7 +274,7 @@ public class PersonMessagesActivity extends BaseActivity {
 
     private void animateListViewDown() {
 
-        if (lvMessagesList != null){
+        if (lvMessagesList != null) {
             animate(lvMessagesList).setDuration(LIST_VIEW_ANIMATION_DURATION).translationYBy
                     (getListViewRowHeight()).setInterpolator(new
                     AccelerateDecelerateInterpolator());
@@ -283,7 +283,7 @@ public class PersonMessagesActivity extends BaseActivity {
 
     private void animateListViewUp() {
 
-        if (lvMessagesList != null){
+        if (lvMessagesList != null) {
             animate(lvMessagesList).setDuration(LIST_VIEW_ANIMATION_DURATION).translationYBy
                     (-getListViewRowHeight()).setInterpolator(new
                     AccelerateDecelerateInterpolator());
@@ -412,7 +412,7 @@ public class PersonMessagesActivity extends BaseActivity {
     private void showMessagesState() {
         //Get the ContactMessages That was clicked
 
-        try{
+        try {
             contactMessages = (ContactMessages) getIntent().getSerializableExtra("contactMessages");
             if (contactMessages.getThread_id() == null) {
                 String from = (String) getIntent().getSerializableExtra("phone");
@@ -430,7 +430,7 @@ public class PersonMessagesActivity extends BaseActivity {
 
             showMessages();
 
-        } catch (Exception e){
+        } catch (Exception e) {
             // Some error...
         }
 
@@ -438,12 +438,12 @@ public class PersonMessagesActivity extends BaseActivity {
 
     private void showMessages() {
 
-        try{
+        try {
             lvMessagesList = (ListView) findViewById(R.id.messagesList);
             lvMessagesList.setStackFromBottom(true);
             adapter = new MessagesAdapter(this, contactMessages.getMessages());
             lvMessagesList.setAdapter(adapter);
-        } catch (Exception e){
+        } catch (Exception e) {
             // Some error...
         }
     }
@@ -497,6 +497,7 @@ public class PersonMessagesActivity extends BaseActivity {
      * Will examine whether smsMessageBody contains a trigger word. If it does, it will light up the popup button
      *
      * @param smsMessageBody The text to examine for a trigger word
+     * @param side           Which popup button to show, left or right
      */
     private void examineSMSTextForTriggerWords(String smsMessageBody, CustomPopupButton.PopupButtonSide side) {
         // Get the outgoing text and trim from both ends of the string white spaces.
@@ -605,7 +606,7 @@ public class PersonMessagesActivity extends BaseActivity {
         });
     }
 
-    private RoundedLayout createPopupView(){
+    private RoundedLayout createPopupView() {
         RoundedLayout roundedLayout = new RoundedLayout(PersonMessagesActivity.this);
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(WindowManager
                 .LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT);
@@ -661,10 +662,11 @@ public class PersonMessagesActivity extends BaseActivity {
 
             // TODO: check which language table we need to query
             // According to device local, check which language table to query
+
+
+            Uri uri = determineTableLanguageToQuery(mApp.getLanguage());
             Cursor triggerWordsCursor = getContentResolver().query
-                    (AppContentProvider.CONTENT_URI_ENGLISH,
-                            columns, "UPPER(" + AppContentProvider
-                                    .COLUMN_TRIGGER_WORD + ") =?",
+                    (uri, columns, "UPPER(" + AppContentProvider.COLUMN_TRIGGER_WORD + ") =?",
                             new String[]{string.toUpperCase()}, null);
 
             // If we have results, save the url of that word token and exit loop
@@ -687,6 +689,25 @@ public class PersonMessagesActivity extends BaseActivity {
             }
         }
         return triggerWordEntity;
+    }
+
+    private Uri determineTableLanguageToQuery(String locale) {
+
+        Uri uri;
+
+        if (locale.equalsIgnoreCase("PT")){
+            uri = AppContentProvider.CONTENT_URI_PORTUGUESE;
+        } else if (locale.equalsIgnoreCase("ES")){
+            uri = AppContentProvider.CONTENT_URI_SPANISH;
+        } else if (locale.equalsIgnoreCase("AR")){
+            uri = AppContentProvider.CONTENT_URI_ARABIC;
+        } else if (locale.equalsIgnoreCase("ZH")){
+            uri = AppContentProvider.CONTENT_URI_CHINESE;
+        } else {
+            uri = AppContentProvider.CONTENT_URI_ENGLISH;
+        }
+
+        return uri;
     }
 
     private String[] getTokenWordsFromIncomingMessageBody(String smsMessageBody) {
@@ -977,7 +998,7 @@ public class PersonMessagesActivity extends BaseActivity {
     //sends an SMS message to another device
     private void sendSMS(final String phoneNumber, final String message) {
 
-        if (!TextUtils.isEmpty(message)){
+        if (!TextUtils.isEmpty(message)) {
             String SENT = "SMS_SENT";
             String DELIVERED = "SMS_DELIVERED";
 

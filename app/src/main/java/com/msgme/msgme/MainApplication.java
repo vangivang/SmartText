@@ -4,7 +4,9 @@ import android.app.Application;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.preference.PreferenceManager;
+import android.text.TextUtils;
 
+import com.msgme.msgme.utils.Tools;
 import com.nostra13.universalimageloader.cache.memory.impl.WeakMemoryCache;
 import com.nostra13.universalimageloader.core.DefaultConfigurationFactory;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -13,6 +15,8 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
 import com.nostra13.universalimageloader.core.display.FadeInBitmapDisplayer;
+
+import java.util.Locale;
 
 /**
  * Created by alonm on 8/30/14.
@@ -57,5 +61,20 @@ public class MainApplication extends Application {
         return mPref;
     }
 
-
+    /**
+     * Return a String representation of the selected device language
+     * @return
+     * <ul>
+     * <li>"EN" for English</li>
+     * <li>"PT" for Portuguese</li>
+     * <li>"ES" for Spanish</li>
+     * <li>"AR" for Arabic</li>
+     * <li>"ZH" for Chinese</li>
+     * </ul>
+     *
+     * Or "EN" if none of these is selected
+     */
+    public String getLanguage() {
+        return Tools.getLocale(Locale.getDefault()) != null ? Tools.getLocale(Locale.getDefault()) : "EN";
+    }
 }

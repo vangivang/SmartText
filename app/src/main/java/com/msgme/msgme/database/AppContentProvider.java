@@ -144,7 +144,21 @@ public class AppContentProvider extends ContentProvider {
         SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
 
         // the TABLE_NAME to query on
-        queryBuilder.setTables(TABLE_TRIGGER_WORDS_ENGLISH);
+
+        String tableName;
+
+        if (uri.equals(AppContentProvider.CONTENT_URI_PORTUGUESE)){
+            tableName = TABLE_TRIGGER_WORDS_PORTUGUESE;
+        } else if (uri.equals(AppContentProvider.CONTENT_URI_SPANISH)){
+            tableName = TABLE_TRIGGER_WORDS_SPANISH;
+        } else if (uri.equals(AppContentProvider.CONTENT_URI_ARABIC)){
+            tableName = TABLE_TRIGGER_WORDS_ARABIC;
+        } else if (uri.equals(AppContentProvider.CONTENT_URI_CHINESE)){
+            tableName = TABLE_TRIGGER_WORDS_CHINESE;
+        } else {
+            tableName = TABLE_TRIGGER_WORDS_ENGLISH;
+        }
+        queryBuilder.setTables(tableName);
         if (TextUtils.isEmpty(sortOrder)) {
             // No sorting-> sort on names by default
             sortOrder = COLUMN_TRIGGER_WORD;
