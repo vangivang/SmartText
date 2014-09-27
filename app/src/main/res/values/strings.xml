@@ -11,5 +11,8 @@
     <string name="title_activity_select_icon">Select icon</string>
     <string name="icon_image">smily</string>
     <string name="title_activity_icon_list_activity">Select Icon</string>
+    <string name="popupHeaderText">Free Coupon</string>
+    <string name="popupFooterText"><![CDATA[GET COUPON NOW >]]></string>
+    <string name="thank_you_text"><b>Thank you</b>\ncoupons will be\navailable soon</string>
 
 </resources>
