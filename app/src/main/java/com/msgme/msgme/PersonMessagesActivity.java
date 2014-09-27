@@ -26,9 +26,11 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AlphaAnimation;
 import android.view.inputmethod.InputMethodManager;
@@ -47,6 +49,7 @@ import com.msgme.msgme.customViews.CustomPopupButton;
 import com.msgme.msgme.customViews.RoundedLayout;
 import com.msgme.msgme.database.AppContentProvider;
 import com.msgme.msgme.database.TriggerWordEntity;
+import com.msgme.msgme.utils.Tools;
 import com.msgme.msgme.vo.ContactMessages;
 import com.msgme.msgme.vo.ContactsMap;
 
@@ -78,6 +81,7 @@ public class PersonMessagesActivity extends BaseActivity {
     private SimpleAdapter mAdapter;
     private TextImage tiMessageBody = null;
     private Context context = this;
+    private RelativeLayout mRootViewGroup;
     private Boolean isMessageSent = false;
     private BroadcastReceiver mIntentReceiver;
     public ListView lvMessagesList = null;
@@ -122,7 +126,6 @@ public class PersonMessagesActivity extends BaseActivity {
             return true;
         }
     });
-
 
     private class UpdateList extends AsyncTask<String, Integer, String> {
 
@@ -192,6 +195,8 @@ public class PersonMessagesActivity extends BaseActivity {
         onIconsClick();
 
         fillContactsAutoComplete();
+
+        mRootViewGroup = (RelativeLayout) findViewById(R.id.main_root_view);
 
         mPopUpButtonLeft = (CustomPopupButton) findViewById(R.id.customPopupButton_left);
         mPopUpButtonRight = (CustomPopupButton) findViewById(R.id.customPopupButton_right);
@@ -441,11 +446,16 @@ public class PersonMessagesActivity extends BaseActivity {
         String[] mSelectionArgs = new String[1];
         mSelectionArgs[0] = contactMessages.getThread_id();
 
-        Cursor cursor = getContentResolver().query(mSmsinboxQueryUri, new String[]{"_id", "thread_id", "date",
+        final Cursor cursor = getContentResolver().query(mSmsinboxQueryUri, new String[]{"_id", "thread_id", "date",
                 "body", "type"}, "thread_id = ?", mSelectionArgs, "date DESC limit 45");
 
         if (cursor.getCount() > 0) {
-            contactMessages.AddNewMsgs(cursor);
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    contactMessages.AddNewMsgs(cursor);
+                }
+            });
         }
 
         if (isHereAfterMessagesListItemClicked && !isMessageSent) {
@@ -464,7 +474,7 @@ public class PersonMessagesActivity extends BaseActivity {
         }
 
 
-        cursor.close();
+//        cursor.close();
     }
 
     /**
@@ -537,11 +547,17 @@ public class PersonMessagesActivity extends BaseActivity {
                     @Override
                     public void run() {
                         String couponString = "Not Available";
-                        RoundedLayout popUpDialog = (RoundedLayout) findViewById(R.id.rounded_layout);
+//                        RoundedLayout popUpDialog = (RoundedLayout) findViewById(R.id.rounded_layout);
 
+                        // We add this programmatically to clean all animations when the cancel button is clicked
+                        // This way there is no need to manually reverse views locations
+                        final RoundedLayout popUpDialog = createPopupView();
+
+                        mRootViewGroup.addView(popUpDialog);
                         popUpDialog.setOnCouponDialogClosedListener(new RoundedLayout.OnCouponDialogClosedListener() {
                             @Override
                             public void onCouponDialogClosedEvent() {
+                                mRootViewGroup.removeView(popUpDialog);
                                 mIsPopupVisible = false;
                                 mPopUpButtonLeft.setButtonVisibility(false);
                                 lightenScreen();
@@ -571,6 +587,18 @@ public class PersonMessagesActivity extends BaseActivity {
 
             }
         });
+    }
+
+    private RoundedLayout createPopupView(){
+        RoundedLayout roundedLayout = new RoundedLayout(PersonMessagesActivity.this);
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(WindowManager
+                .LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT);
+        params.setMargins(Tools.dbToPixels(PersonMessagesActivity.this, 15), 0, 0,
+                Tools.dbToPixels(PersonMessagesActivity.this, 5));
+        params.addRule(RelativeLayout.ABOVE, R.id.customPopupButton_left);
+        roundedLayout.setLayoutParams(params);
+
+        return roundedLayout;
     }
 
     private void delayedListDownAnimation(long delay) {

@@ -1,10 +1,12 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/grid_alternate_1"
-                android:orientation="vertical"
-                tools:context=".PersonMessagesActivity">
+<RelativeLayout
+    android:id="@+id/main_root_view"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/grid_alternate_1"
+    android:orientation="vertical"
+    tools:context=".PersonMessagesActivity">
 
     <!-- Action bar -->
     <FrameLayout
@@ -171,13 +173,13 @@
         android:visibility="invisible"
         />
 
-    <com.msgme.msgme.customViews.RoundedLayout
-        android:id="@+id/rounded_layout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/customPopupButton_left"
-        android:layout_marginBottom="5dp"
-        android:layout_marginLeft="15dp"
-        />
+    <!--<com.msgme.msgme.customViews.RoundedLayout-->
+        <!--android:id="@+id/rounded_layout"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_above="@+id/customPopupButton_left"-->
+        <!--android:layout_marginBottom="5dp"-->
+        <!--android:layout_marginLeft="15dp"-->
+        <!--/>-->
 
 </RelativeLayout>
