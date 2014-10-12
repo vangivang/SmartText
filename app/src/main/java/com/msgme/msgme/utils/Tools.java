@@ -41,7 +41,7 @@ public class Tools {
         return (int) (pixels / scale + 0.5f);
     }
 
-    public static int dbToPixels(Context ctx, int dp) {
+    public static int dpToPixels(Context ctx, int dp) {
         return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp,
                 ctx.getResources().getDisplayMetrics());
     }

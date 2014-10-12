@@ -26,7 +26,6 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -564,7 +563,6 @@ public class PersonMessagesActivity extends BaseActivity {
                     @Override
                     public void run() {
                         String couponString = "Not Available";
-//                        RoundedLayout popUpDialog = (RoundedLayout) findViewById(R.id.rounded_layout);
 
                         // We add this programmatically to clean all animations when the cancel button is clicked
                         // This way there is no need to manually reverse views locations
@@ -610,8 +608,8 @@ public class PersonMessagesActivity extends BaseActivity {
         RoundedLayout roundedLayout = new RoundedLayout(PersonMessagesActivity.this);
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(WindowManager
                 .LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT);
-        params.setMargins(Tools.dbToPixels(PersonMessagesActivity.this, 15), 0, 0,
-                Tools.dbToPixels(PersonMessagesActivity.this, 5));
+        params.setMargins(Tools.dpToPixels(PersonMessagesActivity.this, 15), 0, 0,
+                Tools.dpToPixels(PersonMessagesActivity.this, 5));
         params.addRule(RelativeLayout.ABOVE, R.id.customPopupButton_left);
         roundedLayout.setLayoutParams(params);
 
@@ -660,10 +658,7 @@ public class PersonMessagesActivity extends BaseActivity {
 
         for (String string : tokens) {
 
-            // TODO: check which language table we need to query
             // According to device local, check which language table to query
-
-
             Uri uri = determineTableLanguageToQuery(mApp.getLanguage());
             Cursor triggerWordsCursor = getContentResolver().query
                     (uri, columns, "UPPER(" + AppContentProvider.COLUMN_TRIGGER_WORD + ") =?",
